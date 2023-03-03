@@ -13,29 +13,31 @@ export default function SearchBar() {
   };
 
   const fetchData = (endpoint) => {
-    fetch(endpoint)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.meals && data.meals.length === 1) {
-          history.push(`/meals/${data.meals[0].idMeal}`);
-        } else if (data.meals === null) {
-          global.alert('Sorry, we haven\'t found any recipes for these filters.');
-        } else {
-          setRecipe(data.meals);
-        }
-      });
-
-    fetch(endpoint)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.drinks && data.drinks.length === 1) {
-          history.push(`/drinks/${data.drinks[0].idDrink}`);
-        } else if (data.drinks === null) {
-          global.alert('Sorry, we haven\'t found any recipes for these filters.');
-        } else {
-          setRecipe(data.drinks);
-        }
-      });
+    if (window.location.pathname === '/meals') {
+      fetch(endpoint)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.meals && data.meals.length === 1) {
+            history.push(`/meals/${data.meals[0].idMeal}`);
+          } else if (data.meals === null) {
+            global.alert('Sorry, we haven\'t found any recipes for these filters.');
+          } else {
+            setRecipe(data.meals);
+          }
+        });
+    } else if (window.location.pathname === '/drinks') {
+      fetch(endpoint)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.drinks && data.drinks.length === 1) {
+            history.push(`/drinks/${data.drinks[0].idDrink}`);
+          } else if (data.drinks === null) {
+            global.alert('Sorry, we haven\'t found any recipes for these filters.');
+          } else {
+            setRecipe(data.drinks);
+          }
+        });
+    }
   };
 
   const handleSearch = () => {
