@@ -11,7 +11,6 @@ export default function Meals() {
   React.useEffect(() => {
     if (recipe) {
       setRecipes(recipe);
-      console.log(recipe);
     }
   }, [recipe]);
 
