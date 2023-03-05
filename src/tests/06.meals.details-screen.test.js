@@ -1,7 +1,7 @@
 import React from 'react';
 import { cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import Login from '../Pages/Login';
+import SelectedMeal from '../Pages/SelectedMeal';
 import App from '../App';
 import { renderWithRouterAndProvider } from './helpers/renderWithRouterAndProvider';
 
@@ -9,7 +9,7 @@ afterEach(cleanup);
 
 const VARIAVEIS = 'variaveis';
 
-describe('Teste da página Login.js', () => {
+describe('Teste da página SelectedMeal.js', () => {
   describe('1 - Rota', () => {
     test.only('1.1 - Se o usuário está na rota "/" ao acessar a aplicação.', () => {
 
