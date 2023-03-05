@@ -33,7 +33,7 @@ describe('Teste da página SelectedMeal.js', () => {
   });
 
   describe('4 - Funcionalidade', () => {
-    test.only('4.1 - As regras de negócio em cada cenário possível na interação com o usuário ', () => {
+    test('4.1 - As regras de negócio em cada cenário possível na interação com o usuário ', () => {
 
     });
   });
