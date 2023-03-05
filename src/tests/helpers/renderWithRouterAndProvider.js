@@ -4,7 +4,7 @@ import { Router } from 'react-router-dom';
 import { render } from '@testing-library/react';
 import RecipeProvider from '../../context/RecipeProvider';
 
-export function renderWithRouterandContext(
+export function renderWithRouterAndProvider(
   component,
   {
     initialEntries = ['/'],
