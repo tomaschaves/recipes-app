@@ -17,6 +17,7 @@
   },
   "scripts": {
     "cy": "env CY_CLI=true cypress run",
+    "cy:cli": "npm run cy -- --spec",
     "cy:open": "cypress open --e2e --browser chrome",
     "start": "env ESLINT_NO_DEV_ERRORS=true react-scripts start",
     "build": "react-scripts build",
