@@ -23,7 +23,7 @@ export default function Header({ title, search = false }) {
       {search
       && (
         <button
-          data-testid="profile-top-btn"
+          data-testid="exec-search-btn"
           src={ searchIcon }
           onClick={ () => setSearchEnable(!isSearchEnabled) }
         >
