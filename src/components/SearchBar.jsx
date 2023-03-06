@@ -5,7 +5,7 @@ import RecipeContex from '../context/RecipeContext';
 export default function SearchBar() {
   const [searchType, setSearchType] = React.useState('ingredient');
   const inputRef = React.useRef();
-  const { setRecipe } = React.useContext(RecipeContex);
+  const { setMeals, setDrinks } = React.useContext(RecipeContex);
   const history = useHistory();
 
   const handleSearchTypeChange = (event) => {
@@ -22,7 +22,7 @@ export default function SearchBar() {
           } else if (data.meals === null) {
             global.alert('Sorry, we haven\'t found any recipes for these filters.');
           } else {
-            setRecipe(data.meals);
+            setMeals(data.meals);
           }
         });
     } else if (window.location.pathname === '/drinks') {
@@ -34,7 +34,7 @@ export default function SearchBar() {
           } else if (data.drinks === null) {
             global.alert('Sorry, we haven\'t found any recipes for these filters.');
           } else {
-            setRecipe(data.drinks);
+            setDrinks(data.drinks);
           }
         });
     }
