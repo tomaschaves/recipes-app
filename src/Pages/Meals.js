@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import RecipeContext from '../context/RecipeContext';
@@ -11,12 +11,21 @@ export default function Meals() {
   } = useContext(RecipeContext);
 
   const twelve = 12; // 12 receitas a serem carregadas.
+  const [filteredCategory, setFilteredCategory] = useState([]);
 
   useEffect(() => {
     if (!meals) {
       setMeals(meals);
     }
   }, [meals, setMeals]);
+
+  const filterCategory = async (theme) => {
+    const endpoint = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${theme}`;
+
+    const fetchURL = await fetch(endpoint);
+    const response = await fetchURL.json();
+    console.log(response);
+  };
 
   return (
     <div>
@@ -39,6 +48,7 @@ export default function Meals() {
               // name para que apenas um radio button fique selecionado
               name="option"
               data-testid={ `${category.strCategory}-category-filter` }
+              onClick={ () => filterCategory(category.strCategory) }
             />
           </div>
         )) }
