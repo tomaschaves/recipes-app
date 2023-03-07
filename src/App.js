@@ -11,7 +11,7 @@ import DrinksInProgress from './Pages/DrinksInProgress';
 import Profile from './Pages/Profile';
 import DoneRecipes from './Pages/DoneRecipes';
 import FavoriteRecipes from './Pages/FavoriteRecipes';
-import Recipes from './Pages/Recipes';
+import RecipeDetails from './Pages/RecipeDetails';
 
 function App() {
   return (
@@ -19,11 +19,11 @@ function App() {
       <RecipeProvider>
         <Switch>
           <Route exact path="/" component={ Login } />
-          <Route path="/meals" component={ Meals } />
-          <Route path="/meals/:id" component={ Recipes } />
+          <Route exact path="/meals" component={ Meals } />
+          <Route path="/meals/:id" component={ RecipeDetails } />
           <Route path="/meals/:id/in-progress" component={ MealInProgress } />
-          <Route path="/drinks" component={ Drinks } />
-          <Route path="/drinks/:id" component={ Recipes } />
+          <Route exact path="/drinks" component={ Drinks } />
+          <Route path="/drinks/:id" component={ RecipeDetails } />
           <Route path="/drinks/:id/in-progress" component={ DrinksInProgress } />
           <Route path="/profile" component={ Profile } />
           <Route path="/done-recipes" component={ DoneRecipes } />
