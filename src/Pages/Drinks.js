@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import RecipeContext from '../context/RecipeContext';
@@ -94,24 +95,30 @@ export default function Drinks() {
           // caso o estado de filtro tenha algo nele, fazemos o slice/map a partir dele. Se não tiver nada, fazemos o slice/map do estado padrão(drinks). o map em si é exatamente igual
           filteredCategory.length > 0
             ? filteredCategory.slice(0, twelve).map((filteredDrink, index) => (
-              <div key={ filteredDrink.idDrink } data-testid={ `${index}-recipe-card` }>
-                <img
-                  data-testid={ `${index}-card-img` }
-                  src={ filteredDrink.strDrinkThumb }
-                  alt={ filteredDrink.strDrink }
-                />
-                <p data-testid={ `${index}-card-name` }>{filteredDrink.strDrink}</p>
-              </div>
+              <Link to={ `/meals/${filteredDrink.idMeal}` } key={ filteredDrink.idMeal }>
+                {/* Link do router para entrarmos nos detalhes da receita */}
+                <div data-testid={ `${index}-recipe-card` }>
+                  <img
+                    data-testid={ `${index}-card-img` }
+                    src={ filteredDrink.strDrinkThumb }
+                    alt={ filteredDrink.strDrink }
+                  />
+                  <p data-testid={ `${index}-card-name` }>{filteredDrink.strDrink}</p>
+                </div>
+              </Link>
             ))
             : drinks.slice(0, twelve).map((rec, index) => (
-              <div key={ rec.idDrink } data-testid={ `${index}-recipe-card` }>
-                <img
-                  data-testid={ `${index}-card-img` }
-                  src={ rec.strDrinkThumb }
-                  alt={ rec.strDrink }
-                />
-                <p data-testid={ `${index}-card-name` }>{rec.strDrink}</p>
-              </div>
+              <Link to={ `/drinks/${rec.idDrink}` } key={ rec.idDrink }>
+                {/* Link do router para entrarmos nos detalhes da receita */}
+                <div data-testid={ `${index}-recipe-card` }>
+                  <img
+                    data-testid={ `${index}-card-img` }
+                    src={ rec.strDrinkThumb }
+                    alt={ rec.strDrink }
+                  />
+                  <p data-testid={ `${index}-card-name` }>{rec.strDrink}</p>
+                </div>
+              </Link>
             ))
         }
       </div>

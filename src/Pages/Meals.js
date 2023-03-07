@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import RecipeContext from '../context/RecipeContext';
@@ -70,7 +71,6 @@ export default function Meals() {
               name="option"
               data-testid={ `${category.strCategory}-category-filter` }
               onClick={ filterClick }
-              // onClick={ () => setInState(category.strCategory) }
             />
           </div>
         )) }
@@ -95,24 +95,30 @@ export default function Meals() {
           // caso o estado de filtro tenha algo nele, fazemos o slice/map a partir dele. Se não tiver nada, fazemos o slice/map do estado padrão(meals). o map em si é exatamente igual
           filteredCategory.length > 0
             ? filteredCategory.slice(0, twelve).map((filteredMeal, index) => (
-              <div key={ filteredMeal.idMeal } data-testid={ `${index}-recipe-card` }>
-                <img
-                  data-testid={ `${index}-card-img` }
-                  src={ filteredMeal.strMealThumb }
-                  alt={ filteredMeal.strMeal }
-                />
-                <p data-testid={ `${index}-card-name` }>{filteredMeal.strMeal}</p>
-              </div>
+              <Link to={ `/meals/${filteredMeal.idMeal}` } key={ filteredMeal.idMeal }>
+                {/* Link do router para entrarmos nos detalhes da receita */}
+                <div data-testid={ `${index}-recipe-card` }>
+                  <img
+                    data-testid={ `${index}-card-img` }
+                    src={ filteredMeal.strMealThumb }
+                    alt={ filteredMeal.strMeal }
+                  />
+                  <p data-testid={ `${index}-card-name` }>{filteredMeal.strMeal}</p>
+                </div>
+              </Link>
             ))
             : meals.slice(0, twelve).map((rec, index) => (
-              <div key={ rec.idMeal } data-testid={ `${index}-recipe-card` }>
-                <img
-                  data-testid={ `${index}-card-img` }
-                  src={ rec.strMealThumb }
-                  alt={ rec.strMeal }
-                />
-                <p data-testid={ `${index}-card-name` }>{rec.strMeal}</p>
-              </div>
+              <Link to={ `/meals/${rec.idMeal}` } key={ rec.idMeal }>
+                {/* Link do router para entrarmos nos detalhes da receita */}
+                <div data-testid={ `${index}-recipe-card` }>
+                  <img
+                    data-testid={ `${index}-card-img` }
+                    src={ rec.strMealThumb }
+                    alt={ rec.strMeal }
+                  />
+                  <p data-testid={ `${index}-card-name` }>{rec.strMeal}</p>
+                </div>
+              </Link>
             ))
         }
       </div>
