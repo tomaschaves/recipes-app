@@ -12,6 +12,8 @@ export default function Meals() {
 
   const twelve = 12; // 12 receitas a serem carregadas.
   const [filteredCategory, setFilteredCategory] = useState([]); // para o filtro vindo dos botões das categorias
+  const emptyFilter = {}; // para renderizar o padrão da função filterClick
+  const [categoryClicked, setCategoryClicked] = useState(emptyFilter); // para usar na lógica do filterClick
 
   useEffect(() => {
     if (!meals) {
@@ -32,6 +34,18 @@ export default function Meals() {
     const fetchItems = await filterCategory(theme);
     // setamos o filtro no estado criado para filtrar
     setFilteredCategory(fetchItems);
+  };
+
+  const filterClick = ({ target }) => {
+    if (categoryClicked.id === target.id) {
+      // se ao clicar no elemento o id for igual ao do objeto, resetamos a categoria filtrada e o valor do filtro em si
+      setFilteredCategory([]);
+      setCategoryClicked({});
+    } else if (categoryClicked.id !== target.id || categoryClicked.id === undefined) {
+      // se ao clicar no elemento o id for diferente em relação ao do objeto, setamos a categoria filtrada com o novo valor do filtro, além de setar o valor no objeto de qual categoria está sendo filtrada, para que a comparação dessa função funcione
+      setCategoryClicked({ id: target.id });
+      setInState(target.id);
+    }
   };
 
   return (
@@ -55,7 +69,8 @@ export default function Meals() {
               // name para que apenas um radio button fique selecionado
               name="option"
               data-testid={ `${category.strCategory}-category-filter` }
-              onClick={ () => setInState(category.strCategory) }
+              onClick={ filterClick }
+              // onClick={ () => setInState(category.strCategory) }
             />
           </div>
         )) }
