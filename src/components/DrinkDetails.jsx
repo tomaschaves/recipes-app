@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Carousel from './Carrousel';
 
 export default function DrinkDetails({ recipe, ingredientsFunction }) {
   // recebemos a receita e o array de ingredientes por props
@@ -27,6 +28,7 @@ export default function DrinkDetails({ recipe, ingredientsFunction }) {
         ))
       }
       <p data-testid="instructions">{ recipe.strInstructions }</p>
+      <Carousel options="meals" />
     </div>
   );
 }
