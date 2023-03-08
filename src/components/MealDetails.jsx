@@ -117,8 +117,9 @@ export default function MealDetails({ recipe, ingredientsFunction }) {
         text="Start"
         renderContinue={ getLSInProgress() }
         renderDone={ getLSDone() }
+        type="meals"
+        id={ id() }
       />
-      {/* // se o retorno do doneRecipes for true, renderizamos o botão com o texto start recipe */}
       {/* {
         getLSInProgress() && <InProgressButton text="Continue" /> // se o retorno do doneRecipes for true, renderizamos o botão com o texto continue recipe
       } */}
