@@ -21,11 +21,11 @@ describe('Teste da página Login.js', () => {
       const { history } = renderWithRouterAndProvider(<Login />);
 
       // DEFINIR
-      const roteDefault = '/';
+      const routeDefault = '/';
       const { pathname } = history.location;
 
       // AFERIR
-      expect(pathname).toBe(roteDefault);
+      expect(pathname).toBe(routeDefault);
     });
   });
 
