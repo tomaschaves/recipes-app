@@ -107,6 +107,8 @@ export default function DrinkDetails({ recipe, ingredientsFunction }) {
         text="Start"
         renderContinue={ getLSInProgress() }
         renderDone={ getLSDone() }
+        type="drinks"
+        id={ id() }
       />
       {/* {
         !getLSDone() && <StartButton text="Start" /> // se o retorno do doneRecipes for true, renderizamos o botão com o texto start recipe
