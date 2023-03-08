@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import Carrousel from './Carrousel';
 import StartButton from './StartButton';
+import Buttons from './Buttons';
 // import InProgressButton from './InProgressButton';
 
 export default function MealDetails({ recipe, ingredientsFunction }) {
@@ -112,6 +113,7 @@ export default function MealDetails({ recipe, ingredientsFunction }) {
           />
         )
       }
+      <Buttons />
       <Carrousel options="drinks" />
       <StartButton
         text="Start"
