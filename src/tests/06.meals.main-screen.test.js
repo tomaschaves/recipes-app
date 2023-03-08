@@ -2,7 +2,6 @@ import React from 'react';
 import { cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Meals from '../Pages/Meals';
-import App from '../App';
 import { renderWithRouterAndProvider } from './helpers/renderWithRouterAndProvider';
 
 afterEach(cleanup);
@@ -12,7 +11,17 @@ const VARIAVEIS = 'variaveis';
 describe('Teste da página Meals.js', () => {
   describe('1 - Rota', () => {
     test.only('1.1 - Se o usuário está na rota "/" ao acessar a aplicação.', () => {
+      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
 
+      // ACESSAR
+      const { history } = renderWithRouterAndProvider(<Meals />);
+
+      // DEFINIR
+      const mealsRoute = '/meals';
+      const { pathname } = history.location;
+
+      // AFERIR
+      expect(pathname).toBe(mealsRoute);
     });
   });
 
