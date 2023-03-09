@@ -39,8 +39,8 @@ export default function DrinkDetails({ recipe, ingredientsFunction }) {
   };
   // // função para checarmos se o id consta ou não no localStorage na chave doneRecipes
   const getLSDone = () => {
-  //   // início de um objeto e função mockados para fazer o requisito. Precisando testar o requisito 29 e não tendo sido feito o requisito de done recipes, descomentar, entrar em uma receita de bebida para gerar o LS, e comentar o código novamente.
-  //   // Pode ser retirado futuramente quando for implementada a função de done recipes
+  // início de um objeto e função mockados para fazer os requisitos que pedem local storage. Precisando testar o requisito 29 e não tendo sido feito o requisito de done recipes, descomentar, entrar em uma receita de bebida para gerar o LS, e comentar o código novamente.
+  // Pode ser retirado futuramente quando for implementada a função de done recipes
     const obj = [{
       id: '17222',
       type: 'drink',
