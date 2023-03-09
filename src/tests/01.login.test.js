@@ -30,7 +30,7 @@ describe('Teste da página Login.js', () => {
   });
 
   describe('2 - Navegação', () => {
-    test('2.1 - Se o usuário é redirecionado para a rota "/meals" ao clicar no botão "Login" após preencher corretamente os campos de "email" e "password"', () => {
+    test.only('2.1 - Se o usuário é redirecionado para a rota "/meals" ao clicar no botão "Login" após preencher corretamente os campos de "email" e "password"', () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
 
       // ACESSAR
