@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom';
 import Carousel from './Carrousel';
 import StartButton from './StartButton';
 import Buttons from './Buttons';
-// import InProgressButton from './InProgressButton';
 
 export default function DrinkDetails({ recipe, ingredientsFunction }) {
   const history = useHistory();
@@ -15,10 +14,9 @@ export default function DrinkDetails({ recipe, ingredientsFunction }) {
     return `${idForSearch}`;
   };
 
-  // // função para checarmos se o id consta ou não no localStorage na chave inProgressRecipes
+  // função para checarmos se o id consta ou não no localStorage na chave inProgressRecipes
   const getLSInProgress = () => {
-    //   console.log(JSONKey.drinks);
-    //   // vamos se o id de algum dos elementos do LS é igual ao id do link. se for, retornamos true, para usarmos na renderização condicional do botão de continue recipe
+    // vamos se o id de algum dos elementos do LS é igual ao id do link. se for, retornamos true, para usarmos na renderização condicional do botão de continue recipe
     const obj = {
       drinks: {
         178319: ['lista-de-ingredientes-utilizados'],
@@ -32,7 +30,6 @@ export default function DrinkDetails({ recipe, ingredientsFunction }) {
     const key = localStorage.getItem('inProgressRecipes');
     const JSONKey = JSON.parse(key) || [];
     const findItem = Object.keys(JSONKey?.drinks).some((element) => element === id());
-    // console.log(findItem);
 
     // início de um objeto e função mockados para fazer o requisito. Precisando testar o requisito 30 e não tendo sido feito o requisito de inProgress recipes, descomentar, entrar em uma receita de bebida para gerar o LS, e comentar o código novamente.
     return findItem;
@@ -69,7 +66,6 @@ export default function DrinkDetails({ recipe, ingredientsFunction }) {
     const JSONKey = JSON.parse(key) || [];
     // vamos se o id de algum dos elementos do LS é igual ao id do link. se for, retornamos true, para usarmos na renderização condicional do botão de start recipe
     const findItem = JSONKey.some((element) => element.id === id());
-    console.log(findItem);
     return findItem;
   };
 
@@ -77,6 +73,17 @@ export default function DrinkDetails({ recipe, ingredientsFunction }) {
     getLSDone();
   //   getLSInProgress();
   }, []);
+
+  // criação do objeto para setar no LS
+  const recipeObject = {
+    id: recipe.idDrink,
+    type: 'drink',
+    nationality: '',
+    category: recipe.strCategory,
+    alcoholicOrNot: recipe.strAlcoholic,
+    name: recipe.strDrink,
+    image: recipe.strDrinkThumb,
+  };
   // recebemos a receita e o array de ingredientes por props
   return (
     <div key={ recipe.idDrink }>
@@ -103,7 +110,7 @@ export default function DrinkDetails({ recipe, ingredientsFunction }) {
         ))
       }
       <p data-testid="instructions">{ recipe.strInstructions }</p>
-      <Buttons />
+      <Buttons saveRecipeObject={ recipeObject } />
       <Carousel options="meals" />
       <StartButton
         text="Start"
