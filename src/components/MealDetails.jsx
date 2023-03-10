@@ -77,7 +77,10 @@ export default function MealDetails({ recipe, ingredientsFunction }) {
       ...JSONOptions,
       meals: { ...JSONOptions.meals, [id()]: [] },
     };
-    localStorage.setItem('inProgressRecipes', JSON.stringify(objectToSetInLS));
+
+    if (!(Object.keys(JSONOptions.meals).some((element) => element === id()))) {
+      localStorage.setItem('inProgressRecipes', JSON.stringify(objectToSetInLS));
+    }
   };
 
   // recebemos a receita e o array de ingredientes por props

@@ -7,6 +7,7 @@ export default function RecipeInProgress() {
   // const saveInLS = 52771
   const location = useLocation();
   const [shownRecipe, setShowRecipe] = useState([]);
+  const [optionsSelected, setOptionsSelected] = useState([]);
 
   const id = () => {
     const { location: { pathname } } = history;
@@ -26,7 +27,6 @@ export default function RecipeInProgress() {
         .then((data) => setShowRecipe([data.drinks[0]]));
     }
   }, [location.pathname]);
-  // console.log(shownRecipe);
 
   const getAllIngredients = () => {
     let index = 1;
@@ -48,34 +48,9 @@ export default function RecipeInProgress() {
     return ingredients;
   };
 
-  // const ingredientsObject = [];
-  // getAllIngredients().forEach((ingredient) => ingredientsObject.push({
-  //   name: ingredient,
-  //   status: false,
-  // }));
-
-  // const setIngredientsInLS = () => {
-  //   const key = localStorage.getItem('inProgressRecipes');
-  //   const JSONKey = JSON.parse(key) || [];
-  //   console.log(JSONKey);
-  //   if (/meals/.test(location.pathname)) {
-  //   } else if (/drink/.test(location.pathname)) {
-  //   }
-  //   // vamos se o id de algum dos elementos do LS é igual ao id do link. se for, retornamos true, para usarmos na renderização condicional do botão de start recipe
-  //   // const findItem = JSONKey.some((element) => element.id === id());
-  // }
-  // setIngredientsInLS();
-  // console.log(setIngredientsInLS());
-
-  // const [ingredients, setIngredients] = useState([]);
-
-  useEffect(() => {
-    rightFetch();
-  }, []);
-
-  // const checkedItem = { // constante para o riscado do checked
-  //   textDecoration: 'line-through solid rgb(0, 0, 0)',
-  // };
+  const checkedItem = { // constante para o riscado do checked
+    textDecoration: 'line-through solid rgb(0, 0, 0)',
+  };
 
   const handleRisk = (/* { target }, */ value) => {
     const options = localStorage.getItem('inProgressRecipes');
@@ -84,6 +59,13 @@ export default function RecipeInProgress() {
     let searchDrinkID = JSONOptions.drinks[id()];
 
     if (/meals/.test(location.pathname)) {
+      if (!searchMealID) {
+        const objectToSetInLS = {
+          ...JSONOptions,
+          meals: { ...JSONOptions.meals, [id()]: [value] },
+        };
+        return localStorage.setItem('inProgressRecipes', JSON.stringify(objectToSetInLS));
+      }
       const existingIngredient = searchMealID.some((ingredient) => ingredient === value);
       if (existingIngredient) {
         searchMealID = searchMealID.filter((ingredient) => ingredient !== value);
@@ -95,7 +77,15 @@ export default function RecipeInProgress() {
         meals: { ...JSONOptions.meals, [id()]: searchMealID },
       };
       localStorage.setItem('inProgressRecipes', JSON.stringify(objectToSetInLS));
+      setOptionsSelected(searchMealID);
     } else if (/drinks/.test(location.pathname)) {
+      if (!searchDrinkID) {
+        const objectToSetInLS = {
+          ...JSONOptions,
+          drinks: { ...JSONOptions.drinks, [id()]: [value] },
+        };
+        return localStorage.setItem('inProgressRecipes', JSON.stringify(objectToSetInLS));
+      }
       const existingIngredient = searchDrinkID.some((ingredient) => ingredient === value);
       if (existingIngredient) {
         searchDrinkID = searchDrinkID.filter((ingredient) => ingredient !== value);
@@ -107,8 +97,36 @@ export default function RecipeInProgress() {
         drinks: { ...JSONOptions.drinks, [id()]: searchDrinkID },
       };
       localStorage.setItem('inProgressRecipes', JSON.stringify(objectToSetInLS));
+      setOptionsSelected(searchDrinkID);
+    }
+    // getInfoRiskLS();
+  };
+
+  const getInfoRiskLS = () => {
+    const LSObject = localStorage.getItem('inProgressRecipes');
+    const JSONObject = JSON.parse(LSObject) || [];
+    if (JSONObject.length === 0) {
+      localStorage.setItem('inProgressRecipes', JSON.stringify({
+        meals: {},
+        drinks: {},
+      }));
+      return setOptionsSelected([]);
+    }
+    let searchMealID = JSONObject.meals[id()];
+    let searchDrinkID = JSONObject.drinks[id()];
+    if (/meals/.test(location.pathname)) {
+      searchMealID = JSONObject.meals[id()];
+      setOptionsSelected(searchMealID);
+    } else if (/drinks/.test(location.pathname)) {
+      searchDrinkID = JSONObject.drinks[id()];
+      setOptionsSelected(searchDrinkID);
     }
   };
+
+  useEffect(() => {
+    rightFetch();
+    getInfoRiskLS();
+  }, []);
 
   return (
     <div>
@@ -130,11 +148,15 @@ export default function RecipeInProgress() {
                     htmlFor={ ingredient }
                     key={ ingredient }
                     data-testid={ `${index}-ingredient-step` }
-                    // style={ { textDecoration: checkedItem } }
+                    style={ optionsSelected
+                      && optionsSelected.some((number) => number === index)
+                      ? checkedItem : {} }
                   >
                     <input
                       type="checkbox"
                       id={ ingredient }
+                      checked={ optionsSelected
+                        && optionsSelected.some((number) => number === index) }
                       onClick={ () => handleRisk(index) }
                     />
                     {ingredient}
@@ -161,14 +183,16 @@ export default function RecipeInProgress() {
                     htmlFor={ ingredient }
                     key={ ingredient }
                     data-testid={ `${index}-ingredient-step` }
-                    // style={ isRisked ? checkedItem : {} }
+                    style={ optionsSelected
+                      && optionsSelected.some((number) => number === index)
+                      ? checkedItem : {} }
                   >
                     <input
                       type="checkbox"
                       id={ ingredient }
                       name={ index }
-                      // onClick={ (e) => handleSelected(e) }
-                      // checked={false}
+                      checked={ optionsSelected
+                        && optionsSelected.some((number) => number === index) }
                       onClick={ () => handleRisk(index) }
                     />
                     {ingredient}
