@@ -28,6 +28,7 @@ export default function DrinkDetails({ recipe, ingredientsFunction }) {
 
     if (!key || key.length === 0 || key === undefined) {
       localStorage.setItem('inProgressRecipes', JSON.stringify(obj));
+
       return false;
     }
 
@@ -43,6 +44,7 @@ export default function DrinkDetails({ recipe, ingredientsFunction }) {
 
     if (!key || key.length === 0 || key === undefined) {
       localStorage.setItem('doneRecipes', JSON.stringify([]));
+      return false;
     }
 
     const JSONKey = JSON.parse(key) || [];

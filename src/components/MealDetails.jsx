@@ -13,6 +13,7 @@ export default function MealDetails({ recipe, ingredientsFunction }) {
     const idForSearch = pathname.replace(/\D/g, '');
     return `${idForSearch}`;
   };
+
   // // função para checarmos se o id consta ou não no localStorage na chave inProgressRecipes
   const getLSInProgress = () => {
     // vamos se o id de algum dos elementos do LS é igual ao id do link. se for, retornamos true, para usarmos na renderização condicional do botão de continue recipe
@@ -30,6 +31,7 @@ export default function MealDetails({ recipe, ingredientsFunction }) {
 
       return false;
     }
+
     const JSONKey = JSON.parse(key) || [];
     const findItem = Object.keys(JSONKey?.meals).some((element) => element === id());
 
@@ -42,6 +44,7 @@ export default function MealDetails({ recipe, ingredientsFunction }) {
 
     if (!key || key.length === 0 || key === undefined) {
       localStorage.setItem('doneRecipes', JSON.stringify([]));
+      return false; // mesma ideia do getLSInProgress
     }
 
     const JSONKey = JSON.parse(key) || [];
