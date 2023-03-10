@@ -73,11 +73,11 @@ export default function RecipeInProgress() {
     rightFetch();
   }, []);
 
-  const checkedItem = { // constante para o riscado do checked
-    textDecoration: 'line-through solid rgb(0, 0, 0)',
-  };
+  // const checkedItem = { // constante para o riscado do checked
+  //   textDecoration: 'line-through solid rgb(0, 0, 0)',
+  // };
 
-  const handleRisk = ({ target }, value) => {
+  const handleRisk = (/* { target }, */ value) => {
     const options = localStorage.getItem('inProgressRecipes');
     const JSONOptions = JSON.parse(options) || [];
     let searchMealID = JSONOptions.meals[id()];
@@ -135,7 +135,7 @@ export default function RecipeInProgress() {
                     <input
                       type="checkbox"
                       id={ ingredient }
-                      onClick={ (e) => handleRisk(e, index) }
+                      onClick={ () => handleRisk(index) }
                     />
                     {ingredient}
                   </label>
@@ -169,7 +169,7 @@ export default function RecipeInProgress() {
                       name={ index }
                       // onClick={ (e) => handleSelected(e) }
                       // checked={false}
-                      onClick={ (e) => handleRisk(e, index) }
+                      onClick={ () => handleRisk(index) }
                     />
                     {ingredient}
                   </label>
