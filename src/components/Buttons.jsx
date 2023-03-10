@@ -19,7 +19,6 @@ export default function Buttons({ saveRecipeObject }) {
   };
 
   const isRecipeFavorited = () => {
-    console.log('deu');
     // pegamos o que tiver do LS no favoriteRecipes
     const key = localStorage.getItem('favoriteRecipes');
     // parse do LS ou setar um array vazio
@@ -69,8 +68,6 @@ export default function Buttons({ saveRecipeObject }) {
         Compartilhar
 
       </button>
-      {/* span/div/button com onchange
-img com src do elemento e data-test-id */}
       {
         renderHeart
           ? (
@@ -92,15 +89,6 @@ img com src do elemento e data-test-id */}
             </button>
           )
       }
-      {/* <button
-        type="button"
-        id="favorite"
-        data-testid="favorite-btn"
-        onClick={ saveRecipe }
-      >
-        Favoritar
-
-      </button> */}
       {
         alerted && <p>Link copied!</p> // renderização de 'Link copied!' durante dois segundos, com base no status do estado
       }

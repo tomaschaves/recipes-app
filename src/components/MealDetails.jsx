@@ -15,15 +15,15 @@ export default function MealDetails({ recipe, ingredientsFunction }) {
   };
   // // função para checarmos se o id consta ou não no localStorage na chave inProgressRecipes
   const getLSInProgress = () => {
-    const obj = {
-      drinks: {
-        178319: ['lista-de-ingredientes-utilizados'],
-      },
-      meals: {
-        52771: ['lista-de-ingredientes-utilizados'],
-      },
-    };
-    localStorage.setItem('inProgressRecipes', JSON.stringify(obj));
+    // const obj = {
+    //   drinks: {
+    //     178319: ['lista-de-ingredientes-utilizados'],
+    //   },
+    //   meals: {
+    //     52771: ['lista-de-ingredientes-utilizados'],
+    //   },
+    // };
+    // localStorage.setItem('inProgressRecipes', JSON.stringify(obj));
     const key = localStorage.getItem('inProgressRecipes');
     const JSONKey = JSON.parse(key) || [];
     // vamos se o id de algum dos elementos do LS é igual ao id do link. se for, retornamos true, para usarmos na renderização condicional do botão de continue recipe
@@ -36,28 +36,28 @@ export default function MealDetails({ recipe, ingredientsFunction }) {
   const getLSDone = () => {
   // início de um objeto e função mockados para fazer o requisito. Precisando testar o requisito 29 e não tendo sido feito o requisito de done recipes, descomentar, entrar em uma receita de bebida para gerar o LS, e comentar o código novamente.
   // Pode ser retirado futuramente quando for implementada a função de done recipes
-    const obj = [{
-      id: '17222',
-      type: 'drink',
-      nationality: '',
-      category: 'Cocktail',
-      alcoholicOrNot: 'Alcoholic',
-      name: 'A1',
-      image: 'https://www.thecocktaildb.com/images/media/drink/2x8thr1504816928.jpg',
-      doneDate: '',
-      tags: '[]',
-    }, {
-      id: '15998',
-      type: 'drink',
-      nationality: '',
-      category: 'Cocktail',
-      alcoholicOrNot: 'Not alcoholic',
-      name: 'Xablau',
-      image: 'https://www.thecocktaildb.com/images/media/drink/2x8thr1504816928.jpg',
-      doneDate: '',
-      tags: '[]',
-    }];
-    localStorage.setItem('doneRecipes', JSON.stringify(obj));
+    // const obj = [{
+    //   id: '17222',
+    //   type: 'drink',
+    //   nationality: '',
+    //   category: 'Cocktail',
+    //   alcoholicOrNot: 'Alcoholic',
+    //   name: 'A1',
+    //   image: 'https://www.thecocktaildb.com/images/media/drink/2x8thr1504816928.jpg',
+    //   doneDate: '',
+    //   tags: '[]',
+    // }, {
+    //   id: '15998',
+    //   type: 'drink',
+    //   nationality: '',
+    //   category: 'Cocktail',
+    //   alcoholicOrNot: 'Not alcoholic',
+    //   name: 'Xablau',
+    //   image: 'https://www.thecocktaildb.com/images/media/drink/2x8thr1504816928.jpg',
+    //   doneDate: '',
+    //   tags: '[]',
+    // }];
+    // localStorage.setItem('doneRecipes', JSON.stringify(obj));
 
     // pegamos do local storage o doneRecipes. fazemos o parse dele ou retornamos [] se for vazio, para não quebrar a aplicação
     const key = localStorage.getItem('doneRecipes');
@@ -129,9 +129,6 @@ export default function MealDetails({ recipe, ingredientsFunction }) {
         type="meals"
         id={ id() }
       />
-      {/* {
-        getLSInProgress() && <InProgressButton text="Continue" /> // se o retorno do doneRecipes for true, renderizamos o botão com o texto continue recipe
-      } */}
     </div>
   );
 }
