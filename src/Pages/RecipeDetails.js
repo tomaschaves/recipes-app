@@ -47,6 +47,7 @@ export default function RecipeDetails() {
   }, [rightFetch]);
 
   const ingredientsFunction = () => getAllIngredients();
+  // console.log(ingredientsFunction());
   // renderizamos o componente com base no pathname atual
   const renderComponent = () => {
     if (/meals/.test(location.pathname)) {
