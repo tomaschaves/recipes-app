@@ -21,6 +21,47 @@ export default function RecipeInProgress() {
   }, [location.pathname]);
   console.log(shownRecipe);
 
+  const getAllIngredients = () => {
+    let index = 1;
+    const ingredients = [];
+    if (shownRecipe.length < 1) {
+      return [];
+    }
+    // enquanto não chega à strIngredient20, o código abaixo roda, colocando os ingredientes no array, para fazermos o map deles futuramente
+    while (shownRecipe[0][`strIngredient${index}`] !== ''
+    && shownRecipe[0][`strIngredient${index}`] !== null) {
+      ingredients.push(`${shownRecipe[0][`strIngredient${index}`]} 
+      - ${shownRecipe[0][`strMeasure${index}`]}`);
+      const limit = 19;
+      if (index > limit) {
+        break;
+      }
+      index += 1;
+    }
+    return ingredients;
+  };
+
+  // const ingredientsObject = [];
+  // getAllIngredients().forEach((ingredient) => ingredientsObject.push({
+  //   name: ingredient,
+  //   status: false,
+  // }));
+
+  // const setIngredientsInLS = () => {
+  //   const key = localStorage.getItem('inProgressRecipes');
+  //   const JSONKey = JSON.parse(key) || [];
+  //   console.log(JSONKey);
+  //   if (/meals/.test(location.pathname)) {
+  //   } else if (/drink/.test(location.pathname)) {
+  //   }
+  //   // vamos se o id de algum dos elementos do LS é igual ao id do link. se for, retornamos true, para usarmos na renderização condicional do botão de start recipe
+  //   // const findItem = JSONKey.some((element) => element.id === id());
+  // }
+  // setIngredientsInLS();
+  // console.log(setIngredientsInLS());
+
+  // const [ingredients, setIngredients] = useState([]);
+
   useEffect(() => {
     rightFetch();
   }, []);
@@ -38,6 +79,20 @@ export default function RecipeInProgress() {
             <h1 data-testid="recipe-title">{ shownRecipe[0].strMeal }</h1>
             <p data-testid="recipe-category">{ shownRecipe[0].strCategory }</p>
             <p data-testid="instructions">{ shownRecipe[0].strInstructions }</p>
+            <div className="ingredientsList">
+              {
+                getAllIngredients().map((ingredient, index) => (
+                  <label
+                    htmlFor={ ingredient }
+                    key={ ingredient }
+                    data-testid={ `${index}-ingredient-step` }
+                  >
+                    <input type="checkbox" id={ ingredient } />
+                    {ingredient}
+                  </label>
+                ))
+              }
+            </div>
           </div>
         ) : (
           <div>
@@ -50,6 +105,20 @@ export default function RecipeInProgress() {
             <p data-testid="recipe-category">{ shownRecipe[0].strCategory }</p>
             <p>{ shownRecipe[0].strAlcoholic }</p>
             <p data-testid="instructions">{ shownRecipe[0].strInstructions }</p>
+            <div className="ingredientsList">
+              {
+                getAllIngredients().map((ingredient, index) => (
+                  <label
+                    htmlFor={ ingredient }
+                    key={ ingredient }
+                    data-testid={ `${index}-ingredient-step` }
+                  >
+                    <input type="checkbox" id={ ingredient } />
+                    {ingredient}
+                  </label>
+                ))
+              }
+            </div>
           </div>
         ))
       }
@@ -69,32 +138,17 @@ export default function RecipeInProgress() {
   );
 }
 
-// O elemento de instruções deve possuir o atributo data-testid="instructions";
-
-// imagem
-// título
-// categoria (comidas)
-// alcóolico (bebidas)
-// lista de ingredientes (com quantidades e instruções)
-
-// Desenvolva a tela de modo que contenha uma imagem da receita, o título, a categoria em caso de comidas e se é ou não alcoólico em caso de bebidas, uma lista de ingredientes com suas respectivas quantidades e instruções
-// Observações técnicas
-// Verifica se os atributos data-testid estão presentes na tela:
-
-// A foto deve possuir o atributo data-testid="recipe-photo";
-// O título deve possuir o atributo data-testid="recipe-title";
-// O botão de compartilhar deve possuir o atributo data-testid="share-btn";
-// O botão de favoritar deve possuir o atributo data-testid="favorite-btn";
-// O texto da categoria deve possuir o atributo data-testid="recipe-category";
-// O elemento de instruções deve possuir o atributo data-testid="instructions";
-// O botão para finalizar a receita deve possuir o atributo data-testid="finish-recipe-btn"
-
+// a chave inProgressRecipes deve conter a seguinte estrutura:
 // {
-//   drinks: {
-//       id-da-bebida: [lista-de-ingredientes-utilizados],
-//       ...
-//   },
-//   meals: {
-//       id-da-comida: [lista-de-ingredientes-utilizados],
-//       ...
-//   }
+//     drinks: {
+//         id-da-bebida: [lista-de-ingredientes-utilizados],
+//         ...
+//     },
+//     meals: {
+//         id-da-comida: [lista-de-ingredientes-utilizados],
+//         ...
+//     }
+// }
+// Observações técnicas
+
+// id-da-bebida e id-da-comida representam o ID de uma bebida e comida, respectivamente, e cada item da lista de ingredientes da respectiva receita deve ser representado apenas pelo número do ingrediente no formato numérico.
