@@ -1,11 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import Buttons from '../components/Buttons';
 
 export default function RecipeInProgress() {
+  const history = useHistory();
   // const saveInLS = 52771
   const location = useLocation();
   const [shownRecipe, setShowRecipe] = useState([]);
+
+  const id = () => {
+    const { location: { pathname } } = history;
+    const idForSearch = pathname.replace(/\D/g, '');
+    return `${idForSearch}`;
+  };
 
   // fetch realizado nesse componente para passar nos testes. é possível entrar nessa página passando a receita como props
   const rightFetch = useCallback(() => {
@@ -19,7 +26,7 @@ export default function RecipeInProgress() {
         .then((data) => setShowRecipe([data.drinks[0]]));
     }
   }, [location.pathname]);
-  console.log(shownRecipe);
+  // console.log(shownRecipe);
 
   const getAllIngredients = () => {
     let index = 1;
@@ -66,6 +73,43 @@ export default function RecipeInProgress() {
     rightFetch();
   }, []);
 
+  const checkedItem = { // constante para o riscado do checked
+    textDecoration: 'line-through solid rgb(0, 0, 0)',
+  };
+
+  const handleRisk = ({ target }, value) => {
+    const options = localStorage.getItem('inProgressRecipes');
+    const JSONOptions = JSON.parse(options) || [];
+    let searchMealID = JSONOptions.meals[id()];
+    let searchDrinkID = JSONOptions.drinks[id()];
+
+    if (/meals/.test(location.pathname)) {
+      const existingIngredient = searchMealID.some((ingredient) => ingredient === value);
+      if (existingIngredient) {
+        searchMealID = searchMealID.filter((ingredient) => ingredient !== value);
+      } else {
+        searchMealID.push(value);
+      }
+      const objectToSetInLS = {
+        ...JSONOptions,
+        meals: { ...JSONOptions.meals, [id()]: searchMealID },
+      };
+      localStorage.setItem('inProgressRecipes', JSON.stringify(objectToSetInLS));
+    } else if (/drinks/.test(location.pathname)) {
+      const existingIngredient = searchDrinkID.some((ingredient) => ingredient === value);
+      if (existingIngredient) {
+        searchDrinkID = searchDrinkID.filter((ingredient) => ingredient !== value);
+      } else {
+        searchDrinkID.push(value);
+      }
+      const objectToSetInLS = {
+        ...JSONOptions,
+        drinks: { ...JSONOptions.drinks, [id()]: searchDrinkID },
+      };
+      localStorage.setItem('inProgressRecipes', JSON.stringify(objectToSetInLS));
+    }
+  };
+
   return (
     <div>
       {
@@ -86,8 +130,13 @@ export default function RecipeInProgress() {
                     htmlFor={ ingredient }
                     key={ ingredient }
                     data-testid={ `${index}-ingredient-step` }
+                    // style={ { textDecoration: checkedItem } }
                   >
-                    <input type="checkbox" id={ ingredient } />
+                    <input
+                      type="checkbox"
+                      id={ ingredient }
+                      onClick={ (e) => handleRisk(e, index) }
+                    />
                     {ingredient}
                   </label>
                 ))
@@ -112,8 +161,16 @@ export default function RecipeInProgress() {
                     htmlFor={ ingredient }
                     key={ ingredient }
                     data-testid={ `${index}-ingredient-step` }
+                    // style={ isRisked ? checkedItem : {} }
                   >
-                    <input type="checkbox" id={ ingredient } />
+                    <input
+                      type="checkbox"
+                      id={ ingredient }
+                      name={ index }
+                      // onClick={ (e) => handleSelected(e) }
+                      // checked={false}
+                      onClick={ (e) => handleRisk(e, index) }
+                    />
                     {ingredient}
                   </label>
                 ))
@@ -137,18 +194,3 @@ export default function RecipeInProgress() {
     </div>
   );
 }
-
-// a chave inProgressRecipes deve conter a seguinte estrutura:
-// {
-//     drinks: {
-//         id-da-bebida: [lista-de-ingredientes-utilizados],
-//         ...
-//     },
-//     meals: {
-//         id-da-comida: [lista-de-ingredientes-utilizados],
-//         ...
-//     }
-// }
-// Observações técnicas
-
-// id-da-bebida e id-da-comida representam o ID de uma bebida e comida, respectivamente, e cada item da lista de ingredientes da respectiva receita deve ser representado apenas pelo número do ingrediente no formato numérico.
