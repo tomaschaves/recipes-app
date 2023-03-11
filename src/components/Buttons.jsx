@@ -12,7 +12,7 @@ export default function Buttons({ saveRecipeObject }) {
   const history = useHistory();
   const [alerted, setAlerted] = useState(); // estado para renderizar o 'Link copied!'
 
-  console.log(history.location.pathname, saveRecipeObject);
+  // console.log(history.location.pathname, saveRecipeObject);
 
   // const alcoholicOrNot = '';
   // const category = saveRecipeObject.strCategory;
@@ -65,8 +65,8 @@ export default function Buttons({ saveRecipeObject }) {
     const key = localStorage.getItem('favoriteRecipes');
     // parse do LS ou setar um array vazio
     const existingLSArray = JSON.parse(key) || [];
-    console.log(existingLSArray);
-    console.log(saveRecipeObject);
+    // console.log(existingLSArray);
+    // console.log(saveRecipeObject);
     const checkRecipe = existingLSArray
       .some((element) => element.id === saveRecipeObject.id);
 

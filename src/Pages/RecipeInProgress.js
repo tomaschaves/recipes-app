@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import Buttons from '../components/Buttons';
+import EndButton from '../components/EndButton';
 import returnObjectToSave from '../helpers/returnObjectToSave';
 
 export default function RecipeInProgress() {
@@ -216,17 +217,7 @@ export default function RecipeInProgress() {
       }
       <Buttons saveRecipeObject={ recipeInProgress } />
       { /* passamos para frente o objeto criado com os detalhes a serem salvos no LS */}
-      <button
-        type="button"
-        data-testid="finish-recipe-btn"
-        style={ {
-          position: 'fixed',
-          bottom: 0,
-          width: '100vw',
-        } }
-      >
-        Finalizar receita
-      </button>
+      <EndButton ingredientsNumber={ getAllIngredients() } />
     </div>
   );
 }
