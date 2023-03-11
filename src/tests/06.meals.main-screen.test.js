@@ -1,17 +1,50 @@
 import React from 'react';
-import { cleanup, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { cleanup, fireEvent, waitFor, waitForElementToBeRemoved, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
 import { renderWithRouterAndProvider } from './helpers/renderWithRouterAndProvider';
+import meals from '../../cypress/mocks/meals';
+import drinks from '../../cypress/mocks/drinks';
+import mealCategories from '../../cypress/mocks/mealCategories';
+import drinkCategories from '../../cypress/mocks/drinkCategories';
 
 afterEach(cleanup);
 
 const EMAIL_INPUT = 'email-input';
 const PASSWORD_INPUT = 'password-input';
 const LOGIN_BUTTON = 'login-submit-btn';
-const validEmailTest = 'teste@teste.gmail.com';
-const validPasswordTest = '1234567';
-const mealsRoute = '/meals';
+const VALID_EMAIL_TEST = 'teste@teste.gmail.com';
+const VALIDE_PASSWORD_TEST = '1234567';
+const MEALS_ROUTE = '/meals';
+const MEAL_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
+const DRINK_FETCH_URL = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=';
+const MEAL_FETCH_CATEGORY_URL = 'https://www.themealdb.com/api/json/v1/1/list.php?c=list';
+const DRINKS_FETCH_CATEGORY_URL = 'https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list';
+
+// jest.spyOn(global, 'fetch');
+
+// global.fetch.mockImplementation((url) => {
+//   if (url === MEAL_FETCH_URL) {
+//     return Promise.resolve({
+//       json: () => Promise.resolve(meals),
+//     });
+//   }
+//   if (url === DRINK_FETCH_URL) {
+//     return Promise.resolve({
+//       json: () => Promise.resolve(drinks),
+//     });
+//   }
+//   if (url === MEAL_FETCH_CATEGORY_URL) {
+//     return Promise.resolve({
+//       json: () => Promise.resolve(mealCategories),
+//     });
+//   }
+//   if (url === DRINKS_FETCH_CATEGORY_URL) {
+//     return Promise.resolve({
+//       json: () => Promise.resolve(drinkCategories),
+//     });
+//   }
+// });
 
 // FUNÇÃO PARA EFETUAR O LOGIN NA APLICAÇÃO
 // const handleLogin = ({ getByTestId }) => {
@@ -21,14 +54,39 @@ const mealsRoute = '/meals';
 //   const loginButton = getByTestId(LOGIN_BUTTON);
 
 //   // AGIR
-//   userEvent.type(emailInput, validEmailTest);
-//   userEvent.type(passwordInput, validPasswordTest);
+//   userEvent.type(emailInput, VALID_EMAIL_TEST);
+//   userEvent.type(passwordInput, VALIDE_PASSWORD_TEST);
 //   userEvent.click(loginButton);
 // };
 
 describe('Teste da página Meals.js', () => {
   describe('1 - Rota', () => {
     test.only('1.1 - Se o usuário é redirecionado para a rota "/meals" ao efetuar o login na aplicação.', async () => {
+      jest.spyOn(global, 'fetch');
+
+      global.fetch.mockImplementation((url) => {
+        if (url === MEAL_FETCH_URL) {
+          return Promise.resolve({
+            json: () => Promise.resolve(meals),
+          });
+        }
+        if (url === DRINK_FETCH_URL) {
+          return Promise.resolve({
+            json: () => Promise.resolve(drinks),
+          });
+        }
+        if (url === MEAL_FETCH_CATEGORY_URL) {
+          return Promise.resolve({
+            json: () => Promise.resolve(mealCategories),
+          });
+        }
+        if (url === DRINKS_FETCH_CATEGORY_URL) {
+          return Promise.resolve({
+            json: () => Promise.resolve(drinkCategories),
+          });
+        }
+      });
+
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
       const { history, getByTestId, getByText } = renderWithRouterAndProvider(<App />);
 
@@ -38,25 +96,19 @@ describe('Teste da página Meals.js', () => {
       const loginButton = getByTestId(LOGIN_BUTTON);
 
       // AGIR
-      userEvent.type(emailInput, validEmailTest);
-      userEvent.type(passwordInput, validPasswordTest);
+      userEvent.type(emailInput, VALID_EMAIL_TEST);
+      userEvent.type(passwordInput, VALIDE_PASSWORD_TEST);
       userEvent.click(loginButton);
 
-      await waitForElementToBeRemoved(loginButton, { timeout: 3000 });
+      // ACESSAR
       const { pathname } = history.location;
-      expect(pathname).toBe(mealsRoute);
-      // console.log(pathname);
+      const pageTitle = getByTestId('page-title');
+      const title = getByText('Meals');
 
-      // expect(emailInput).not.toBeInTheDocument();
-      // // await wait(1000);
-
-      await waitFor(() => {
-        const pageTitle = getByTestId('page-title');
-        const title = getByText('Meals');
-        // AFERIR
-        expect(title).toBeInTheDocument();
-        expect(pageTitle).toBeInTheDocument();
-      });
+      // AFERIR
+      expect(pathname).toBe(MEALS_ROUTE);
+      expect(title).toBeInTheDocument();
+      expect(pageTitle).toBeInTheDocument();
     });
   });
 
