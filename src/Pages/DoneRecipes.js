@@ -4,7 +4,8 @@ import Header from '../components/Header';
 export default function DoneRecipes() {
   const getFromLocalStorage = () => {
     const getLS = localStorage.getItem('doneRecipes');
-    const parseLS = JSON.parse(getLS);
+    let parseLS = JSON.parse(getLS);
+    parseLS = parseLS !== null ? parseLS : [];
     return parseLS;
   };
 
