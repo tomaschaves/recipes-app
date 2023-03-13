@@ -81,7 +81,7 @@ export default function RecipeInProgress() {
       } else {
         searchMealID.push(value); // senão, colocamos o ingrediente no array
       }
-      const objectToSetInLS = { // criamos o objeto a ser setado, dando spreado no que já existe, spreado nas meals que já existem e setando no id atual, o array atualizado de ingredientes
+      const objectToSetInLS = { // criamos o objeto a ser setado, dando spread no que já existe, spread nas meals que já existem e setando no id atual, o array atualizado de ingredientes
         ...JSONOptions,
         meals: { ...JSONOptions.meals, [id()]: searchMealID },
       };
