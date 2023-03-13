@@ -5,7 +5,8 @@ import Footer from '../components/Footer';
 
 export default function Profile() {
   const history = useHistory();
-  const getEmail = () => JSON.parse(localStorage.getItem('user')).email;
+
+  const getEmail = () => JSON.parse(localStorage.getItem('user')).email || '';
 
   const mrStarkIDontFeelSoGood = () => {
     localStorage.clear();
