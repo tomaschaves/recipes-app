@@ -4,6 +4,9 @@ const returnDoneRecipeLSObject = async (type, id) => {
     const endpoint = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`;
     const fetchType = await fetch(endpoint);
     const response = await fetchType.json();
+    let { strTags } = response.meals[0];
+    strTags = strTags !== null ? strTags.split(',') : [];
+
     return {
       id: response.meals[0].idMeal,
       type: 'meal',
@@ -13,7 +16,7 @@ const returnDoneRecipeLSObject = async (type, id) => {
       name: response.meals[0].strMeal,
       image: response.meals[0].strMealThumb,
       doneDate: new Date(),
-      tags: response.meals[0].strTags.split(','),
+      tags: strTags,
     };
   }
   const endpoint = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;

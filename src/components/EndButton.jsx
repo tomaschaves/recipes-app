@@ -52,8 +52,12 @@ export default function EndButton({ ingredientsNumber }) {
       // pegamos do objeto a comida do id atual
       const newDoneObject = Object
         .entries(parseInProgressRecipes.meals).filter((element) => element[0] === id());
+      console.log(newDoneObject);
+      console.log(newDoneObject[0]);
+      console.log(newDoneObject[0][0]);
       // chamamos a função que retorna o objeto a setar no LS
       const newRecipe = await returnDoneRecipeLSObject('meals', newDoneObject[0][0]);
+      console.log(newRecipe);
       const doneRecipes = localStorage.getItem('doneRecipes');
       const parseDoneRecipes = JSON.parse(doneRecipes) || [];
       // criamos um novo array a ser setado no LS e setamos ele

@@ -12,41 +12,6 @@ export default function Buttons({ saveRecipeObject }) {
   const history = useHistory();
   const [alerted, setAlerted] = useState(); // estado para renderizar o 'Link copied!'
 
-  // console.log(history.location.pathname, saveRecipeObject);
-
-  // const alcoholicOrNot = '';
-  // const category = saveRecipeObject.strCategory;
-  // const id = saveRecipeObject.idMeal;
-  // const image = saveRecipeObject.strMealThumb;
-  // const name = saveRecipeObject.strMeal;
-  // const nationality = saveRecipeObject.strArea;
-  // const type = 'meal';
-  // saveRecipeObject = {
-  //   alcoholicOrNot,
-  //   category,
-  //   id,
-  //   image,
-  //   name,
-  //   nationality,
-  //   type,
-  // };
-
-  // if (saveRecipeObject.type === 'meal') {
-  //   saveRecipeObject = {
-  //     alcoholicOrNot: '',
-  //     category: saveRecipeObject.strCategory,
-  //     id: saveRecipeObject.idMeal,
-  //     image: saveRecipeObject.strMealThumb,
-  //     name: saveRecipeObject.strMeal,
-  //     nationality: saveRecipeObject.strArea,
-  //     type: 'meal',
-  //   };
-  //   console.log('meal');
-  //   console.log(saveRecipeObject);
-  // } else if (saveRecipeObject.type === 'drink') {
-  //   console.log('drink');
-  // }
-
   const copyLink = () => {
     let path = history.location.pathname;
     path = path.replace('/in-progress', '');
