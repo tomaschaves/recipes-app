@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import shareIcon from '../images/shareIcon.svg';
 import Header from '../components/Header';
 
 export default function DoneRecipes() {
@@ -23,35 +24,76 @@ export default function DoneRecipes() {
       </div>
       {
         getFromLocalStorage().map((recipe, index) => (
-          <div key={ recipe.id }>
-            <img
-              src={ recipe.image }
-              alt={ recipe.name }
-              data-testid={ `${index}-horizontal-image` }
-            />
-            <p data-testid={ `${index}-horizontal-top-text` }>{ recipe.category }</p>
-            <p data-testid={ `${index}-horizontal-name` }>{ recipe.name }</p>
-            <p data-testid={ `${index}-horizontal-done-date` }>{ recipe.doneDate }</p>
-            <button
-              type="button"
-              data-testid={ `${index}-horizontal-share-btn` }
-            >
-              Compartilhar
+          recipe.type === 'meal' ? (
+            <div key={ recipe.id }>
+              <img
+                src={ recipe.image }
+                alt={ recipe.name }
+                data-testid={ `${index}-horizontal-image` }
+              />
+              <p
+                data-testid={ `${index}-horizontal-top-text` }
+              >
+                { `${recipe.nationality} - ${recipe.category}` }
 
-            </button>
-            {
-              recipe.tags.map((tag, indexTag) => (
-                <p
-                  data-testid={ `${index}-${tag}-horizontal-tag` }
-                  key={ `${indexTag}-${tag}` }
-                >
-                  { tag }
+              </p>
+              <p data-testid={ `${index}-horizontal-name` }>{ recipe.name }</p>
+              <p data-testid={ `${index}-horizontal-done-date` }>{ recipe.doneDate }</p>
+              <button
+                type="button"
+                data-testid={ `${index}-horizontal-share-btn` }
+                src={ shareIcon }
+              >
+                <img src={ shareIcon } alt="shareIcon" />
+              </button>
+              {
+                recipe.tags.map((tag, indexTag) => (
+                  <p
+                    data-testid={ `${index}-${tag}-horizontal-tag` }
+                    key={ `${indexTag}-${tag}` }
+                  >
+                    { tag }
 
-                </p>
-              ))
-            }
-          </div>
-        ))
+                  </p>
+                ))
+              }
+            </div>
+          ) : (
+            <div key={ recipe.id }>
+              <img
+                src={ recipe.image }
+                alt={ recipe.name }
+                data-testid={ `${index}-horizontal-image` }
+              />
+              <p data-testid={ `${index}-horizontal-name` }>{ recipe.name }</p>
+              <p
+                data-testid={ `${index}-horizontal-top-text` }
+              >
+                { recipe.alcoholicOrNot }
+
+              </p>
+              <p data-testid={ `${index}-horizontal-top-text` }>{ recipe.category }</p>
+              <p data-testid={ `${index}-horizontal-done-date` }>{ recipe.doneDate }</p>
+              <button
+                type="button"
+                data-testid={ `${index}-horizontal-share-btn` }
+                src={ shareIcon }
+              >
+                <img src={ shareIcon } alt="shareIcon" />
+              </button>
+              {
+                recipe.tags.map((tag, indexTag) => (
+                  <p
+                    data-testid={ `${index}-${tag}-horizontal-tag` }
+                    key={ `${indexTag}-${tag}` }
+                  >
+                    { tag }
+
+                  </p>
+                ))
+              }
+            </div>
+          )))
       }
     </div>
   );
