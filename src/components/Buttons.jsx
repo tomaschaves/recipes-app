@@ -15,11 +15,8 @@ export default function Buttons({ saveRecipeObject }) {
   const copyLink = () => {
     let path = history.location.pathname;
     path = path.replace('/in-progress', '');
-    // console.log(path);
 
     copy(`http://localhost:3000${path}`);
-    // copy(path); // usando o copy para copiar o link do local atual
-    // copy(`http://localhost:3000${history.location.pathname}`); // usando o copy para copiar o link do local atual
     setAlerted(true); // aparece o alerta 'Link copied!'
     const twoSeconds = 2000;
     setTimeout(() => { setAlerted(false); }, twoSeconds); // retira o alerta

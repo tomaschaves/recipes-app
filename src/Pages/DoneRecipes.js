@@ -1,13 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import shareIcon from '../images/shareIcon.svg';
 import Header from '../components/Header';
 
+const copy = require('clipboard-copy'); // referência e instalação no arquivo referenciasBibliotecas.md
+
 export default function DoneRecipes() {
+  const [alerted, setAlerted] = useState(); // estado para renderizar o 'Link copied!'
+
   const getFromLocalStorage = () => {
     const getLS = localStorage.getItem('doneRecipes');
     let parseLS = JSON.parse(getLS);
     parseLS = parseLS !== null ? parseLS : [];
     return parseLS;
+  };
+
+  const copyLink = (type, id) => {
+    copy(`http://localhost:3000/${type}/${id}`);
+    setAlerted(true); // aparece o alerta 'Link copied!'
+    const twoSeconds = 2000;
+    setTimeout(() => { setAlerted(false); }, twoSeconds); // retira o alerta
   };
 
   useEffect(() => {
@@ -43,6 +54,7 @@ export default function DoneRecipes() {
                 type="button"
                 data-testid={ `${index}-horizontal-share-btn` }
                 src={ shareIcon }
+                onClick={ () => copyLink('meals', recipe.id) }
               >
                 <img src={ shareIcon } alt="shareIcon" />
               </button>
@@ -56,6 +68,9 @@ export default function DoneRecipes() {
 
                   </p>
                 ))
+              }
+              {
+                alerted && <p>Link copied!</p> // renderização de 'Link copied!' durante dois segundos, com base no status do estado
               }
             </div>
           ) : (
@@ -78,6 +93,7 @@ export default function DoneRecipes() {
                 type="button"
                 data-testid={ `${index}-horizontal-share-btn` }
                 src={ shareIcon }
+                onClick={ () => copyLink('drinks', recipe.id) }
               >
                 <img src={ shareIcon } alt="shareIcon" />
               </button>
@@ -91,6 +107,9 @@ export default function DoneRecipes() {
 
                   </p>
                 ))
+              }
+              {
+                alerted && <p>Link copied!</p> // renderização de 'Link copied!' durante dois segundos, com base no status do estado
               }
             </div>
           )))
