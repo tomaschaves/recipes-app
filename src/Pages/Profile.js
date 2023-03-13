@@ -5,7 +5,14 @@ import Footer from '../components/Footer';
 
 export default function Profile() {
   const history = useHistory();
-  const getEmail = () => JSON.parse(localStorage.getItem('user')).email;
+
+  // const getEmail = () => JSON.parse(localStorage.getItem('user')).email || '';
+
+  const getEmail = () => {
+    const key = JSON.parse(localStorage.getItem('user'));
+    const email = key !== null ? key.email : '';
+    return email;
+  };
 
   const mrStarkIDontFeelSoGood = () => {
     localStorage.clear();
