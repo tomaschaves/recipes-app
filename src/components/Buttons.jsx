@@ -11,8 +11,50 @@ export default function Buttons({ saveRecipeObject }) {
 
   const history = useHistory();
   const [alerted, setAlerted] = useState(); // estado para renderizar o 'Link copied!'
+
+  // console.log(history.location.pathname, saveRecipeObject);
+
+  // const alcoholicOrNot = '';
+  // const category = saveRecipeObject.strCategory;
+  // const id = saveRecipeObject.idMeal;
+  // const image = saveRecipeObject.strMealThumb;
+  // const name = saveRecipeObject.strMeal;
+  // const nationality = saveRecipeObject.strArea;
+  // const type = 'meal';
+  // saveRecipeObject = {
+  //   alcoholicOrNot,
+  //   category,
+  //   id,
+  //   image,
+  //   name,
+  //   nationality,
+  //   type,
+  // };
+
+  // if (saveRecipeObject.type === 'meal') {
+  //   saveRecipeObject = {
+  //     alcoholicOrNot: '',
+  //     category: saveRecipeObject.strCategory,
+  //     id: saveRecipeObject.idMeal,
+  //     image: saveRecipeObject.strMealThumb,
+  //     name: saveRecipeObject.strMeal,
+  //     nationality: saveRecipeObject.strArea,
+  //     type: 'meal',
+  //   };
+  //   console.log('meal');
+  //   console.log(saveRecipeObject);
+  // } else if (saveRecipeObject.type === 'drink') {
+  //   console.log('drink');
+  // }
+
   const copyLink = () => {
-    copy(`http://localhost:3000${history.location.pathname}`); // usando o copy para copiar o link do local atual
+    let path = history.location.pathname;
+    path = path.replace('/in-progress', '');
+    // console.log(path);
+
+    copy(`http://localhost:3000${path}`);
+    // copy(path); // usando o copy para copiar o link do local atual
+    // copy(`http://localhost:3000${history.location.pathname}`); // usando o copy para copiar o link do local atual
     setAlerted(true); // aparece o alerta 'Link copied!'
     const twoSeconds = 2000;
     setTimeout(() => { setAlerted(false); }, twoSeconds); // retira o alerta
@@ -24,6 +66,7 @@ export default function Buttons({ saveRecipeObject }) {
     // parse do LS ou setar um array vazio
     const existingLSArray = JSON.parse(key) || [];
     // console.log(existingLSArray);
+    // console.log(saveRecipeObject);
     const checkRecipe = existingLSArray
       .some((element) => element.id === saveRecipeObject.id);
 
@@ -57,7 +100,7 @@ export default function Buttons({ saveRecipeObject }) {
   });
 
   return (
-    <div>
+    <div style={ { marginBottom: '100px' } }>
       <button
         type="button"
         id="share"

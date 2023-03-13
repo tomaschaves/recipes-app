@@ -1,13 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import Buttons from '../components/Buttons';
+import EndButton from '../components/EndButton';
+import returnObjectToSave from '../helpers/returnObjectToSave';
 
 export default function RecipeInProgress() {
   const history = useHistory();
-  // const saveInLS = 52771
   const location = useLocation();
   const [shownRecipe, setShowRecipe] = useState([]);
   const [optionsSelected, setOptionsSelected] = useState([]);
+  const [recipeInProgress, setRecipeInProgress] = useState({}); // estado para ser colocado o objeto atual, que será salvo ou retirado do LS
 
   const id = () => {
     const { location: { pathname } } = history;
@@ -27,6 +29,13 @@ export default function RecipeInProgress() {
         .then((data) => setShowRecipe([data.drinks[0]]));
     }
   }, [location.pathname]);
+
+  const objToSave = () => { // quando o estado for algo com tamanho maior que 0, chamamos a função que criará o objeto a ser setado no estado de receita em andamento
+    if (shownRecipe.length > 0) {
+      const type = location.pathname.replace(/\//g, '').replace(/[0-9]/g, '').replace('in-progress', '');
+      setRecipeInProgress(returnObjectToSave(type, shownRecipe[0]));
+    }
+  };
 
   const getAllIngredients = () => {
     let index = 1;
@@ -58,27 +67,27 @@ export default function RecipeInProgress() {
     let searchMealID = JSONOptions.meals[id()];
     let searchDrinkID = JSONOptions.drinks[id()];
 
-    if (/meals/.test(location.pathname)) {
-      if (!searchMealID) {
-        const objectToSetInLS = {
+    if (/meals/.test(location.pathname)) { // se o link for de 'meals'
+      if (!searchMealID) { // o id para ser pesquisado for undefined(ou seja, não constar dentro do LS(em JSONOptions))
+        const objectToSetInLS = { // criaremos o objeto para setar no LS
           ...JSONOptions,
-          meals: { ...JSONOptions.meals, [id()]: [value] },
+          meals: { ...JSONOptions.meals, [id()]: [value] }, // passando o id atual e o valor dos ingredientes
         };
-        return localStorage.setItem('inProgressRecipes', JSON.stringify(objectToSetInLS));
+        return localStorage.setItem('inProgressRecipes', JSON.stringify(objectToSetInLS)); // setamos no LS
       }
-      const existingIngredient = searchMealID.some((ingredient) => ingredient === value);
-      if (existingIngredient) {
-        searchMealID = searchMealID.filter((ingredient) => ingredient !== value);
+      const existingIngredient = searchMealID.some((ingredient) => ingredient === value); // procuramos pra ver se o ingrediente existe no array de ingredientes do id
+      if (existingIngredient) { // se o ingrediente existir
+        searchMealID = searchMealID.filter((ingredient) => ingredient !== value); // filtramos ele do array antigo e setamos esse array filtrado como novo array
       } else {
-        searchMealID.push(value);
+        searchMealID.push(value); // senão, colocamos o ingrediente no array
       }
-      const objectToSetInLS = {
+      const objectToSetInLS = { // criamos o objeto a ser setado, dando spread no que já existe, spread nas meals que já existem e setando no id atual, o array atualizado de ingredientes
         ...JSONOptions,
         meals: { ...JSONOptions.meals, [id()]: searchMealID },
       };
       localStorage.setItem('inProgressRecipes', JSON.stringify(objectToSetInLS));
       setOptionsSelected(searchMealID);
-    } else if (/drinks/.test(location.pathname)) {
+    } else if (/drinks/.test(location.pathname)) { // mesma coisa acima, mas para as bebidas
       if (!searchDrinkID) {
         const objectToSetInLS = {
           ...JSONOptions,
@@ -99,24 +108,23 @@ export default function RecipeInProgress() {
       localStorage.setItem('inProgressRecipes', JSON.stringify(objectToSetInLS));
       setOptionsSelected(searchDrinkID);
     }
-    // getInfoRiskLS();
   };
 
-  const getInfoRiskLS = () => {
+  const getInfoRiskLS = () => { // vamos ver no LS...
     const LSObject = localStorage.getItem('inProgressRecipes');
     const JSONObject = JSON.parse(LSObject) || [];
-    if (JSONObject.length === 0) {
+    if (JSONObject.length === 0) { // ...se algo existe e se não, setar um objeto vazio lá
       localStorage.setItem('inProgressRecipes', JSON.stringify({
         meals: {},
         drinks: {},
       }));
       return setOptionsSelected([]);
     }
-    let searchMealID = JSONObject.meals[id()];
+    let searchMealID = JSONObject.meals[id()]; // pegaremos o array de opções do id de comidas e bebidas atual
     let searchDrinkID = JSONObject.drinks[id()];
     if (/meals/.test(location.pathname)) {
       searchMealID = JSONObject.meals[id()];
-      setOptionsSelected(searchMealID);
+      setOptionsSelected(searchMealID); // e setaremos ele no estado de opções
     } else if (/drinks/.test(location.pathname)) {
       searchDrinkID = JSONObject.drinks[id()];
       setOptionsSelected(searchDrinkID);
@@ -127,6 +135,10 @@ export default function RecipeInProgress() {
     rightFetch();
     getInfoRiskLS();
   }, []);
+
+  useEffect(() => {
+    objToSave();
+  }, [shownRecipe]);
 
   return (
     <div>
@@ -203,18 +215,9 @@ export default function RecipeInProgress() {
           </div>
         ))
       }
-      <Buttons saveRecipeObject={ shownRecipe } />
-      <button
-        type="button"
-        data-testid="finish-recipe-btn"
-        style={ {
-          position: 'fixed',
-          bottom: 0,
-          width: '100vw',
-        } }
-      >
-        Finalizar receita
-      </button>
+      <Buttons saveRecipeObject={ recipeInProgress } />
+      { /* passamos para frente o objeto criado com os detalhes a serem salvos no LS */}
+      <EndButton ingredientsNumber={ getAllIngredients() } />
     </div>
   );
 }

@@ -70,14 +70,15 @@ export default function MealDetails({ recipe, ingredientsFunction }) {
   };
 
   const setMealInLS = () => {
+    // pegamos a chave do LS, vemos se existe algo ou retornamos um array vazio
     const options = localStorage.getItem('inProgressRecipes');
     const JSONOptions = JSON.parse(options) || [];
-
+    // setamos um array vazio no id chamado, para que seja possível colocar os ingredientes
     const objectToSetInLS = {
       ...JSONOptions,
       meals: { ...JSONOptions.meals, [id()]: [] },
     };
-
+    // se não existir um elemento com o mesmo id da página, criamos sua chave, com valor []
     if (!(Object.keys(JSONOptions.meals).some((element) => element === id()))) {
       localStorage.setItem('inProgressRecipes', JSON.stringify(objectToSetInLS));
     }

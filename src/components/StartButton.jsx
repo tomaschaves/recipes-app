@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 
 export default function StartButton({
-  renderContinue, renderDone, id, type, recipeDetails, redirect }) {
+  renderContinue, renderDone, id, type, redirect }) {
   const history = useHistory();
 
+  // para entrar na tela in-progress da receita
   const click = () => {
     redirect();
     history.push({
       pathname: `/${type}/${id}/in-progress`,
-      state: { recipeDetails },
     });
   };
   return (
