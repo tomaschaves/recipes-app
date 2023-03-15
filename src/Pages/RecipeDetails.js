@@ -13,7 +13,7 @@ export default function RecipeDetails() {
       fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${(location.pathname.replace(/\D/g, ''))}`)
         .then((response) => response.json())
         .then((data) => setShowRecipe([data.meals[0]]));
-    } else if (/drink/.test(location.pathname)) {
+    } else if (/drinks/.test(location.pathname)) {
       fetch(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${(location.pathname.replace(/\D/g, ''))}`)
         .then((response) => response.json())
         .then((data) => setShowRecipe([data.drinks[0]]));
@@ -44,7 +44,7 @@ export default function RecipeDetails() {
   // didmount para o rightFetch
   useEffect(() => {
     rightFetch();
-  }, [rightFetch]);
+  }, []);
 
   const ingredientsFunction = () => getAllIngredients();
   // renderizamos o componente com base no pathname atual

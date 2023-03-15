@@ -22,16 +22,18 @@ const MEALS_ROUTE = '/meals';
 const PROFILE_ROUTE = '/profile';
 const DRINKS_ROUTE = '/drinks';
 const CORBA_RECIPE = '/meals/52977';
-const GG_DRINKS = '/drinks/15997';
+const GG_DRINK = '/drinks/15997';
 const SEARCH_INPUT = 'search-input';
 const DRINKS_BOTTON_BTN = 'drinks-bottom-btn';
 const RECIPE_CARD_0 = '0-recipe-card';
 
-const MEAL_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
+const MEAL_INGREDIENT_FETCH_URL_EMPTY = 'https://www.themealdb.com/api/json/v1/1/filter.php?i=';
+const MEAL_NAME_FETCH_URL_EMPTY = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
 const MEAL_FETCH_CATEGORY_URL = 'https://www.themealdb.com/api/json/v1/1/list.php?c=list';
 const MEAL_FILTER_INGREDIENT_FETCH_URL_DEFAULT = 'https://www.themealdb.com/api/json/v1/1/filter.php?i=';
 const MEAL_FILTER_INGREDIENT_CHICKEN_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/filter.php?i=chicken';
 const MEAL_NAME_ARRABIATA_RECIPE_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/search.php?s=Arrabiata';
+const MEAL_FIRST_LETTER_A_RECIPE_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/search.php?f=a';
 const MEAL_RANDOM_RECIPE_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/random.php';
 const MEAL_ID_52771_RECIPE_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/lookup.php?i=52771';
 const MEAL_ID_52977_RECIPE_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/lookup.php?i=52977';
@@ -42,11 +44,15 @@ const DRINKS_FILTER_INGREDIENT_FETCH_URL_DEFAULT = 'https://www.thecocktaildb.co
 const DRINK_FILTER_INGREDIENT_LIGHT_RUM_FETCH_URL = 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=Light rum';
 const DRINK_RANDOM_RECIPE_FETCH_URL = 'https://www.thecocktaildb.com/api/json/v1/1/random.php';
 const DRINK_ID_178319_RECIPE_FETCH_URL = 'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=178319';
+const DRINK_ID_15997_RECIPE_FETCH_URL = 'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=15997';
 const DRINK_NAME_AQUAMARINE_RECIPE_FETCH_URL = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=Aquamarine';
 
 beforeEach(() => {
   jest.spyOn(global, 'fetch').mockImplementation(async (url) => {
-    if (url === MEAL_FETCH_URL) {
+    if (url === MEAL_INGREDIENT_FETCH_URL_EMPTY) {
+      return { json: async () => meals };
+    }
+    if (url === MEAL_NAME_FETCH_URL_EMPTY) {
       return { json: async () => meals };
     }
     if (url === DRINK_FETCH_URL) {
@@ -75,6 +81,7 @@ beforeEach(() => {
         || url === MEAL_RANDOM_RECIPE_FETCH_URL
         || url === MEAL_ID_52771_RECIPE_FETCH_URL
         || url === MEAL_ID_52977_RECIPE_FETCH_URL
+        || url === MEAL_FIRST_LETTER_A_RECIPE_FETCH_URL
     ) {
       return { json: async () => oneMeal };
     }
@@ -82,6 +89,7 @@ beforeEach(() => {
       url === DRINK_NAME_AQUAMARINE_RECIPE_FETCH_URL
         || url === DRINK_RANDOM_RECIPE_FETCH_URL
         || url === DRINK_ID_178319_RECIPE_FETCH_URL
+        || url === DRINK_ID_15997_RECIPE_FETCH_URL
     ) {
       return { json: async () => oneDrink };
     }
@@ -194,7 +202,7 @@ describe('Teste da página Meals.js', () => {
       expect(pathname).toBe(MEALS_ROUTE);
     });
 
-    test('2.4 - Receita: o usuário é redirecionado para a rota "/meals:52977" ao pressionar a imagem da receita "Corba" a partir da rota "/meals".', async () => {
+    test('2.4 - Receita: o usuário é redirecionado para a rota "/meals/52977" ao pressionar a imagem da receita "Corba" a partir da rota "/meals".', async () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
       const { history, getByTestId, findByTestId } = renderWithRouterAndProvider(<App />);
 
@@ -232,8 +240,7 @@ describe('Teste da página Meals.js', () => {
       userEvent.click(drinksButton);
 
       // ACESSAR
-      await waitFor(() => findByTestId(RECIPE_CARD_0));
-      const ggDrinks = getByTestId(RECIPE_CARD_0);
+      const ggDrinks = await findByTestId(RECIPE_CARD_0);
 
       // AGIR
       userEvent.click(ggDrinks);
@@ -242,7 +249,7 @@ describe('Teste da página Meals.js', () => {
       const { location: { pathname } } = history;
 
       // AFERIR
-      expect(pathname).toBe(GG_DRINKS);
+      expect(pathname).toBe(GG_DRINK);
     });
   });
 
@@ -446,7 +453,7 @@ describe('Teste da página Meals.js', () => {
 
   describe('4 - Teste as funcionalidades do componente <Meals />', () => {
     describe('4.1 - Teste a duncionalidade de "Buscar".', () => {
-      test('4.1.1 - Buscar: verifique se ao realizar uma busca com o input vazio, a primeira receita é "Brown Stew Chicken"', async () => {
+      test('4.1.1 - Buscar: verifique se ao realizar uma busca por ingrediente com o input vazio, a primeira receita é "Corba"', async () => {
         // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
         const {
           getByTestId,
@@ -462,8 +469,85 @@ describe('Teste da página Meals.js', () => {
         // AGIR - clica no botão captura
         userEvent.click(searchTopButton);
 
-        // // AGIR - aguarda a ultma receita de comida ser renderizada
-        // await waitFor(() => findByAltText('Big Mac'));
+        // ACESSAR - captura o botão de filtro por ingrediente
+        const ingredientFilterButon = getByTestId('ingredient-search-radio')
+
+        // AGIR - clica no filtro capturado
+        userEvent.click(ingredientFilterButon)
+
+        // ACESSAR  - captura o botão que ativa o filtro de busca
+        const execSearchButton = getByTestId('exec-search-btn');
+
+        // AGIR - clica no botao de ativação do filtro.
+        userEvent.click(execSearchButton);
+
+        // ACESSAR
+        const corbaRecipe = await findByAltText('Corba');
+
+        // AFERIR
+        expect(corbaRecipe).toBeInTheDocument();
+
+        // screen.debug();
+      });
+
+      test('4.1.2 - Buscar: verifique se ao realizar uma busca por nome com o input vazio, a primeira receita é "Corba"', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
+
+        // ACESSAR - captura o botão de busca no topo
+        const searchTopButton = getByTestId('search-top-btn');
+
+        // AGIR - clica no botão captura
+        userEvent.click(searchTopButton);
+
+        // ACESSAR - captura filtro por nome
+        const nameFilterButton = getByTestId('name-search-radio')
+
+        // AGIR - clico no filtro capturado
+        userEvent.click(nameFilterButton)
+
+        // ACESSAR  - captura o botão que ativa o filtro de busca
+        const execSearchButton = getByTestId('exec-search-btn');
+
+        // AGIR - clica no botao de ativação do filtro.
+        userEvent.click(execSearchButton);
+
+        // ACESSAR
+        const corbaRecipe = await findByAltText('Corba');
+
+        // AFERIR
+        expect(corbaRecipe).toBeInTheDocument();
+
+        // screen.debug();
+      });
+
+      test('4.1.3 - Buscar: verifique se ao realizar uma busca de ingrediente pelo termo "chicken", a primeira receita é "Brown Stew Chicken"', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
+
+        // ACESSAR - captura o botão de busca no topo
+        const searchTopButton = getByTestId('search-top-btn');
+
+        // AGIR - clica no botão captura
+        userEvent.click(searchTopButton);
+
+        // ACESSAR - captura o elemento de input
+        const searchInput = getByTestId('search-input');
+
+        // AGIR - insere o termo de busca "chicken" no input
+        userEvent.type(searchInput, 'chicken');
 
         // ACESSAR  - captura o botão que ativa o filtro de busca
         const execSearchButton = getByTestId('exec-search-btn');
@@ -476,57 +560,99 @@ describe('Teste da página Meals.js', () => {
 
         // AFERIR
         expect(brownStewChickenRecipe).toBeInTheDocument();
-
-        // screen.debug();
       });
-    });
 
-    test('4.1.2 - Buscar: verifique se ao realizar uma busca de ingrediente pelo termo "chicken", a primeira receita é "Brown Stew Chicken"', async () => {
-      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const {
-        getByTestId,
-        findByAltText,
-      } = renderWithRouterAndProvider(<App />);
+      test('4.1.4 - Buscar: verifique se ao realizar uma busca pelo nome, utilizando o termo "arrabiata", a primeira receita é "Spicy Arrabiata Penne"', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
 
-      // AGIR - LOGAR
-      handleLogin(getByTestId);
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
 
-      // ACESSAR - captura o botão de busca no topo
-      const searchTopButton = getByTestId('search-top-btn');
+        // ACESSAR - captura o botão de busca no topo
+        const searchTopButton = getByTestId('search-top-btn');
 
-      // AGIR - clica no botão captura
-      userEvent.click(searchTopButton);
+        // AGIR - clica no botão captura
+        userEvent.click(searchTopButton);
 
-      // ACESSAR - captura o elemento de input
-      const searchInput = getByTestId('search-input');
+        // ACESSAR - captura o elemento de input
+        const searchInput = getByTestId('search-input');
 
-      // AGIR - insere o termo de busca "chicken" no input
-      userEvent.type(searchInput, 'chicken');
-      console.log('TAYPOU NO INPUT', searchInput.value);
+        // AGIR - insere o termo de busca "chicken" no input
+        userEvent.type(searchInput, 'Arrabiata');
 
-      // ACESSAR  - captura o botão que ativa o filtro de busca
-      const execSearchButton = getByTestId('exec-search-btn');
+        // ACESSAR - filtro de nome
+        const nameFilterRadio = getByTestId('name-search-radio')
 
-      // AGIR - clica no botao de ativação do filtro.
-      userEvent.click(execSearchButton);
+        // AGIR - clickar no filtro de nome
+        userEvent.click(nameFilterRadio)
 
-      // ACESSAR
-      const brownStewChickenRecipe = await findByAltText('Brown Stew Chicken');
+        // ACESSAR  - captura o botão que ativa o filtro de busca
+        const execSearchButton = getByTestId('exec-search-btn');
 
-      // AFERIR
-      expect(brownStewChickenRecipe).toBeInTheDocument();
+        // AGIR - clica no botao de ativação do filtro.
+        userEvent.click(execSearchButton);
 
-      // screen.debug();
-    });
+        // ACESSAR
+        const spicyArrabiataPenneRecipe = await findByAltText('Spicy Arrabiata Penne');
 
-    test('4.3 - As regras de negócio em cada cenário possível na interação com o usuário ', () => {
-      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const {
-        getByTestId,
-      } = renderWithRouterAndProvider(<App />);
+        // AFERIR
+        expect(spicyArrabiataPenneRecipe).toBeInTheDocument();
+      });
 
-      // AGIR - LOGAR
-      handleLogin(getByTestId);
+      test('4.1.5 - Buscar: verifique se ao realizar uma busca pela primeira letra, utilizando o termo "a", a primeira receita é "Spicy Arrabiata Penne"', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
+
+        // ACESSAR - captura o botão de busca no topo
+        const searchTopButton = getByTestId('search-top-btn');
+
+        // AGIR - clica no botão captura
+        userEvent.click(searchTopButton);
+
+        // ACESSAR - captura o elemento de input
+        const searchInput = getByTestId('search-input');
+
+        // AGIR - insere o termo de busca "chicken" no input
+        userEvent.type(searchInput, 'a');
+
+        // ACESSAR - filtro de primeira letra
+        const firstLetterFilterRadio = getByTestId('first-letter-search-radio')
+
+        // AGIR - clickar no filtro de nome
+        userEvent.click(firstLetterFilterRadio)
+
+        // ACESSAR  - captura o botão que ativa o filtro de busca
+        const execSearchButton = getByTestId('exec-search-btn');
+
+        // AGIR - clica no botao de ativação do filtro.
+        userEvent.click(execSearchButton);
+
+        // ACESSAR
+        const spicyArrabiataPenneRecipe = await findByAltText('Spicy Arrabiata Penne');
+
+        // AFERIR
+        expect(spicyArrabiataPenneRecipe).toBeInTheDocument();
+      });
+
+      test('4.1.6 - As regras de negócio em cada cenário possível na interação com o usuário ', () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+        } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
+      });
     });
   });
 });
