@@ -1,5 +1,5 @@
 import React from 'react';
-import { cleanup, waitFor, screen } from '@testing-library/react';
+import { cleanup, waitFor, screen, findByTestId, findByAltText } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
 import { renderWithRouterAndProvider } from './helpers/renderWithRouterAndProvider';
@@ -31,7 +31,12 @@ const MEAL_INGREDIENT_FETCH_URL_EMPTY = 'https://www.themealdb.com/api/json/v1/1
 const MEAL_NAME_FETCH_URL_EMPTY = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
 const MEAL_FETCH_CATEGORY_URL = 'https://www.themealdb.com/api/json/v1/1/list.php?c=list';
 const MEAL_FILTER_INGREDIENT_FETCH_URL_DEFAULT = 'https://www.themealdb.com/api/json/v1/1/filter.php?i=';
-const MEAL_FILTER_INGREDIENT_CHICKEN_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/filter.php?i=chicken';
+const MEAL_SEARCH_INGREDIENT_FETCH_URL_DEFAULT = 'https://www.themealdb.com/api/json/v1/1/filter.php?i=chicken';
+const MEAL_FILTER_INGREDIENT_BEFF_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/filter.php?c=Beef';
+const MEAL_FILTER_INGREDIENT_BREAKFAST_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/filter.php?c=Breakfast';
+const MEAL_FILTER_INGREDIENT_CHICKEN_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/filter.php?c=Chicken';
+const MEAL_FILTER_INGREDIENT_DESSERT_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/filter.php?c=Dessert';
+const MEAL_FILTER_INGREDIENT_GOAT_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/filter.php?c=Goat';
 const MEAL_NAME_ARRABIATA_RECIPE_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/search.php?s=Arrabiata';
 const MEAL_FIRST_LETTER_A_RECIPE_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/search.php?f=a';
 const MEAL_RANDOM_RECIPE_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/random.php';
@@ -67,7 +72,13 @@ beforeEach(() => {
     if (url === MEAL_FILTER_INGREDIENT_FETCH_URL_DEFAULT) {
       return { json: async () => mealsByIngredient };
     }
-    if (url === MEAL_FILTER_INGREDIENT_CHICKEN_FETCH_URL) {
+    if (    url === MEAL_FILTER_INGREDIENT_CHICKEN_FETCH_URL
+        || url === MEAL_FILTER_INGREDIENT_BEFF_FETCH_URL
+        || url === MEAL_FILTER_INGREDIENT_BREAKFAST_FETCH_URL
+        || url === MEAL_FILTER_INGREDIENT_DESSERT_FETCH_URL
+        || url === MEAL_FILTER_INGREDIENT_GOAT_FETCH_URL
+        || url === MEAL_SEARCH_INGREDIENT_FETCH_URL_DEFAULT    
+      ) {
       return { json: async () => mealsByIngredient };
     }
     if (url === DRINK_FILTER_INGREDIENT_LIGHT_RUM_FETCH_URL) {
@@ -82,7 +93,7 @@ beforeEach(() => {
         || url === MEAL_ID_52771_RECIPE_FETCH_URL
         || url === MEAL_ID_52977_RECIPE_FETCH_URL
         || url === MEAL_FIRST_LETTER_A_RECIPE_FETCH_URL
-    ) {
+      ) {
       return { json: async () => oneMeal };
     }
     if (
@@ -452,7 +463,7 @@ describe('Teste da página Meals.js', () => {
   });
 
   describe('4 - Teste as funcionalidades do componente <Meals />', () => {
-    describe('4.1 - Teste a duncionalidade de "Buscar".', () => {
+    describe('4.1 - Teste a funcionalidade de "Buscar".', () => {
       test('4.1.1 - Buscar: verifique se ao realizar uma busca por ingrediente com o input vazio, a primeira receita é "Corba"', async () => {
         // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
         const {
@@ -509,7 +520,7 @@ describe('Teste da página Meals.js', () => {
         // ACESSAR - captura filtro por nome
         const nameFilterButton = getByTestId('name-search-radio')
 
-        // AGIR - clico no filtro capturado
+        // AGIR - clica no filtro capturado
         userEvent.click(nameFilterButton)
 
         // ACESSAR  - captura o botão que ativa o filtro de busca
@@ -527,7 +538,48 @@ describe('Teste da página Meals.js', () => {
         // screen.debug();
       });
 
-      test('4.1.3 - Buscar: verifique se ao realizar uma busca de ingrediente pelo termo "chicken", a primeira receita é "Brown Stew Chicken"', async () => {
+      test('4.1.3 - Buscar: verifique se ao realizar uma busca pela primeira letra com o input vazio, o alerta "Your search must have only 1 (one) character" é exibido na tela.', async () => {
+        // MOCK
+        jest.spyOn(global, 'alert').mockReturnValue('Your search must have only 1 (one) character')
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByAltText,
+          findByText,
+        } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
+
+        // ACESSAR - captura o botão de busca no topo
+        const searchTopButton = getByTestId('search-top-btn');
+
+        // AGIR - clica no botão captura
+        userEvent.click(searchTopButton);
+
+        // ACESSAR - captura filtro por nome
+        const firstLetterFilterButton = getByTestId('first-letter-search-radio')
+
+        // AGIR - clica no filtro capturado
+        userEvent.click(firstLetterFilterButton)
+
+        // ACESSAR  - captura o botão que ativa o filtro de busca
+        const execSearchButton = getByTestId('exec-search-btn');
+
+        // AGIR - clica no botao de ativação do filtro.
+        userEvent.click(execSearchButton);
+
+        // ACESSAR
+        // const ondeCharacterText = await findByText('Your search must have only 1 (one) character');
+
+        // AFERIR
+        expect(global.alert).toHaveBeenCalled()
+        // expect(ondeCharacterText).toBeVisible();
+
+        // screen.debug();
+      });
+
+      test('4.1.4 - Buscar: verifique se ao realizar uma busca de ingrediente pelo termo "chicken", a primeira receita é "Brown Stew Chicken"', async () => {
         // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
         const {
           getByTestId,
@@ -562,7 +614,7 @@ describe('Teste da página Meals.js', () => {
         expect(brownStewChickenRecipe).toBeInTheDocument();
       });
 
-      test('4.1.4 - Buscar: verifique se ao realizar uma busca pelo nome, utilizando o termo "arrabiata", a primeira receita é "Spicy Arrabiata Penne"', async () => {
+      test('4.1.5 - Buscar: verifique se ao realizar uma busca pelo nome, utilizando o termo "arrabiata", a primeira receita é "Spicy Arrabiata Penne"', async () => {
         // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
         const {
           getByTestId,
@@ -603,7 +655,7 @@ describe('Teste da página Meals.js', () => {
         expect(spicyArrabiataPenneRecipe).toBeInTheDocument();
       });
 
-      test('4.1.5 - Buscar: verifique se ao realizar uma busca pela primeira letra, utilizando o termo "a", a primeira receita é "Spicy Arrabiata Penne"', async () => {
+      test('4.1.6 - Buscar: verifique se ao realizar uma busca pela primeira letra, utilizando o termo "a", a primeira receita é "Spicy Arrabiata Penne"', async () => {
         // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
         const {
           getByTestId,
@@ -644,15 +696,159 @@ describe('Teste da página Meals.js', () => {
         expect(spicyArrabiataPenneRecipe).toBeInTheDocument();
       });
 
-      test('4.1.6 - As regras de negócio em cada cenário possível na interação com o usuário ', () => {
+    });
+
+    describe('4.2 - Teste a funcionalidade de filtar', () => {
+      test('4.2.1 - Filtrar: verifique se ao selecionar o filtro "Beef", a receita "Brown Stew Chicken" está presente na tela.', async () => {
         // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
         const {
           getByTestId,
+          findByTestId,
+          findByAltText,
         } = renderWithRouterAndProvider(<App />);
-
+  
         // AGIR - LOGAR
         handleLogin(getByTestId);
-      });
+
+        // ACESSAR - capturar filtro Beff
+        const beffFilter = await findByTestId('Beef-category-filter')
+
+        // AGIR - pressionar de filtro capturado
+        userEvent.click(beffFilter)
+
+        // ACESSAR
+        const brownStewChicken = await findByAltText('Brown Stew Chicken')
+
+        // AFERIR
+        expect(brownStewChicken).toBeVisible()
+
+      })
+      
+      test('4.2.2 - Filtrar: verifique se ao selecionar o filtro "Breakfast", a receita "Brown Stew Chicken" está presente na tela', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
+  
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
+
+        // ACESSAR - capturar filtro Beff
+        const breakfastFilter = await findByTestId('Breakfast-category-filter')
+
+        // AGIR - pressionar de filtro capturado
+        userEvent.click(breakfastFilter)
+
+        // ACESSAR
+        const brownStewChicken = await findByAltText('Brown Stew Chicken')
+
+        // AFERIR
+        expect(brownStewChicken).toBeVisible()
+      })
+
+      test('4.2.3 - Filtrar: verifique se ao selecionar o filtro "Chicken", a receita "Brown Stew Chicken" está presente na tela.', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
+  
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
+
+        // ACESSAR - capturar filtro Beff
+        const chickenFilter = await findByTestId('Chicken-category-filter')
+
+        // AGIR - pressionar de filtro capturado
+        userEvent.click(chickenFilter)
+
+        // ACESSAR
+        const brownStewChicken = await findByAltText('Brown Stew Chicken')
+
+        // AFERIR
+        expect(brownStewChicken).toBeVisible()
+      })
+
+      test('4.2.4 - Filtrar: verifique se ao selecionar o filtro "Dessert",a receita "Brown Stew Chicken" está presente na tela.', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
+  
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
+
+        // ACESSAR - capturar filtro Beff
+        const dessertFilter = await findByTestId('Dessert-category-filter')
+
+        // AGIR - pressionar de filtro capturado
+        userEvent.click(dessertFilter)
+
+        // ACESSAR
+        const brownStewChicken = await findByAltText('Brown Stew Chicken')
+
+        // AFERIR
+        expect(brownStewChicken).toBeVisible()
+      })
+
+      test('4.2.5 - Filtrar: verifique se ao selecionar o filtro "Goat", a receita "Brown Stew Chicken" está presente na tela.', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
+  
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
+
+        // ACESSAR - capturar filtro Beff
+        const goatFilter = await findByTestId('Goat-category-filter')
+
+        // AGIR - pressionar de filtro capturado
+        userEvent.click(goatFilter)
+
+        // ACESSAR
+        const brownStewChicken = await findByAltText('Brown Stew Chicken')
+
+        // AFERIR
+        expect(brownStewChicken).toBeVisible()
+      })
+
+      test('4.2.6 - Filtrar: verifique se ao selecionar o filtro "Goat" e pressionar o botão "All" para limpar os filtros, a receita "Corba" está presente na tela', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
+  
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
+
+        // ACESSAR - capturar filtro Beff
+        const goatFilter = await findByTestId('Goat-category-filter')
+
+        // AGIR - pressionar de filtro capturado
+        userEvent.click(goatFilter)
+
+        // ACESSAR
+        const allCategoryFilterButton = getByTestId('All-category-filter')
+
+        // AGIR
+        userEvent.click(allCategoryFilterButton)
+
+        // ACESSAR
+        const corbaRecipe = await findByAltText('Corba')
+
+        // AFERIR
+        expect(corbaRecipe).toBeVisible()
+      })
     });
   });
 });
