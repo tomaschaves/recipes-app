@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom';
 import Carousel from './Carrousel';
 import StartButton from './StartButton';
 import Buttons from './Buttons';
-// import InProgressButton from './InProgressButton';
 
 export default function DrinkDetails({ recipe, ingredientsFunction }) {
   const history = useHistory();
@@ -15,68 +14,76 @@ export default function DrinkDetails({ recipe, ingredientsFunction }) {
     return `${idForSearch}`;
   };
 
-  // // função para checarmos se o id consta ou não no localStorage na chave inProgressRecipes
+  // função para checarmos se o id consta ou não no localStorage na chave inProgressRecipes
   const getLSInProgress = () => {
-    //   console.log(JSONKey.drinks);
-    //   // vamos se o id de algum dos elementos do LS é igual ao id do link. se for, retornamos true, para usarmos na renderização condicional do botão de continue recipe
+    // vamos se o id de algum dos elementos do LS é igual ao id do link. se for, retornamos true, para usarmos na renderização condicional do botão de continue recipe
     const obj = {
       drinks: {
-        178319: ['lista-de-ingredientes-utilizados'],
       },
       meals: {
-        52771: ['lista-de-ingredientes-utilizados'],
       },
     };
-    localStorage.setItem('inProgressRecipes', JSON.stringify(obj));
 
     const key = localStorage.getItem('inProgressRecipes');
+
+    if (!key || key.length === 0 || key === undefined) {
+      localStorage.setItem('inProgressRecipes', JSON.stringify(obj));
+
+      return false;
+    }
+
     const JSONKey = JSON.parse(key) || [];
     const findItem = Object.keys(JSONKey?.drinks).some((element) => element === id());
-    // console.log(findItem);
 
-    // início de um objeto e função mockados para fazer o requisito. Precisando testar o requisito 30 e não tendo sido feito o requisito de inProgress recipes, descomentar, entrar em uma receita de bebida para gerar o LS, e comentar o código novamente.
     return findItem;
   };
   // // função para checarmos se o id consta ou não no localStorage na chave doneRecipes
   const getLSDone = () => {
-  // início de um objeto e função mockados para fazer os requisitos que pedem local storage. Precisando testar o requisito 29 e não tendo sido feito o requisito de done recipes, descomentar, entrar em uma receita de bebida para gerar o LS, e comentar o código novamente.
-  // Pode ser retirado futuramente quando for implementada a função de done recipes
-    const obj = [{
-      id: '17222',
-      type: 'drink',
-      nationality: '',
-      category: 'Cocktail',
-      alcoholicOrNot: 'Alcoholic',
-      name: 'A1',
-      image: 'https://www.thecocktaildb.com/images/media/drink/2x8thr1504816928.jpg',
-      doneDate: '',
-      tags: '[]',
-    }, {
-      id: '15998',
-      type: 'drink',
-      nationality: '',
-      category: 'Cocktail',
-      alcoholicOrNot: 'Not alcoholic',
-      name: 'Xablau',
-      image: 'https://www.thecocktaildb.com/images/media/drink/2x8thr1504816928.jpg',
-      doneDate: '',
-      tags: '[]',
-    }];
-    localStorage.setItem('doneRecipes', JSON.stringify(obj));
-
     // pegamos do local storage o doneRecipes. fazemos o parse dele ou retornamos [] se for vazio, para não quebrar a aplicação
     const key = localStorage.getItem('doneRecipes');
+
+    if (!key || key.length === 0 || key === undefined) {
+      localStorage.setItem('doneRecipes', JSON.stringify([]));
+      return false;
+    }
+
     const JSONKey = JSON.parse(key) || [];
     // vamos se o id de algum dos elementos do LS é igual ao id do link. se for, retornamos true, para usarmos na renderização condicional do botão de start recipe
     const findItem = JSONKey.some((element) => element.id === id());
-    console.log(findItem);
     return findItem;
   };
 
   useEffect(() => {
     getLSDone();
-  //   getLSInProgress();
+    getLSInProgress();
   }, []);
+
+  // criação do objeto para setar no LS
+  const recipeObject = {
+    id: recipe.idDrink,
+    type: 'drink',
+    nationality: '',
+    category: recipe.strCategory,
+    alcoholicOrNot: recipe.strAlcoholic,
+    name: recipe.strDrink,
+    image: recipe.strDrinkThumb,
+  };
+
+  const setDrinksInLS = () => {
+    // pegamos a chave do LS, vemos se existe algo ou retornamos um array vazio
+    const options = localStorage.getItem('inProgressRecipes');
+    const JSONOptions = JSON.parse(options) || [];
+    // setamos um array vazio no id chamado, para que seja possível colocar os ingredientes
+    const objectToSetInLS = {
+      ...JSONOptions,
+      drinks: { ...JSONOptions.drinks, [id()]: [] },
+    };
+    // se não existir um elemento com o mesmo id da página, criamos sua chave, com valor []
+    if (!(Object.keys(JSONOptions.drinks).some((element) => element === id()))) {
+      localStorage.setItem('inProgressRecipes', JSON.stringify(objectToSetInLS));
+    }
+  };
+
   // recebemos a receita e o array de ingredientes por props
   return (
     <div key={ recipe.idDrink }>
@@ -103,7 +110,7 @@ export default function DrinkDetails({ recipe, ingredientsFunction }) {
         ))
       }
       <p data-testid="instructions">{ recipe.strInstructions }</p>
-      <Buttons />
+      <Buttons saveRecipeObject={ recipeObject } />
       <Carousel options="meals" />
       <StartButton
         text="Start"
@@ -111,13 +118,9 @@ export default function DrinkDetails({ recipe, ingredientsFunction }) {
         renderDone={ getLSDone() }
         type="drinks"
         id={ id() }
+        recipeDetails={ recipeObject }
+        redirect={ setDrinksInLS }
       />
-      {/* {
-        !getLSDone() && <StartButton text="Start" /> // se o retorno do doneRecipes for true, renderizamos o botão com o texto start recipe
-      } */}
-      {/* {
-        getLSInProgress() && <InProgressButton text="Continue" /> // se o retorno do doneRecipes for true, renderizamos o botão com o texto continue recipe
-      } */}
     </div>
   );
 }
