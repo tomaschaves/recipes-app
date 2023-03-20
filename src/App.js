@@ -4,8 +4,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Route, Switch } from 'react-router-dom';
 import Login from './Pages/Login';
 import RecipeProvider from './context/RecipeProvider';
-import Meals from './Pages/Meals';
-import Drinks from './Pages/Drinks';
 import RecipeInProgress from './Pages/RecipeInProgress';
 import Profile from './Pages/Profile';
 import DoneRecipes from './Pages/DoneRecipes';
