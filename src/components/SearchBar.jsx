@@ -14,7 +14,6 @@ export default function SearchBar() {
   };
 
   const fetchData = (endpoint) => {
-    console.log('FETCHOU', history.location.pathname);
     if (history.location.pathname === '/meals') {
       fetch(endpoint)
         .then((response) => response.json())

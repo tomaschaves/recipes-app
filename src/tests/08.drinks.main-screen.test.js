@@ -14,6 +14,8 @@ import oneMeal from './mockData/oneMeal';
 import oneDrink from './mockData/oneDrink';
 import mealIngredients from './mockData/mealIngredients';
 import drinkIngredients from './mockData/drinkIngredients';
+import emptyMeals from './mockData/emptyMeals';
+import emptyDrinks from './mockData/emptyDrinks';
 
 const MEALS_ROUTE = '/meals';
 const PROFILE_ROUTE = '/profile';
@@ -45,6 +47,7 @@ const MEAL_FIRST_LETTER_A_RECIPE_FETCH_URL = 'https://www.themealdb.com/api/json
 const MEAL_RANDOM_RECIPE_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/random.php';
 const MEAL_ID_52771_RECIPE_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/lookup.php?i=52771';
 const MEAL_ID_52977_RECIPE_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/lookup.php?i=52977';
+const MEAL_SEARCH_NAME_XABLAU_FETCH_URL = 'https://www.themealdb.com/api/json/v1/1/search.php?s=xablau';
 
 const DRINK_FETCH_URL = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=';
 const DRINK_INGREDIENTS_FETCH_URL_DEFAULT = 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=';
@@ -61,6 +64,7 @@ const DRINK_ID_178319_RECIPE_FETCH_URL = 'https://www.thecocktaildb.com/api/json
 const DRINK_ID_15997_RECIPE_FETCH_URL = 'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=15997';
 const DRINK_NAME_AQUAMARINE_RECIPE_FETCH_URL = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=Aquamarine';
 const DRINK_FIRST_LETTER_A_RECIPE_FETCH_URL = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?f=a';
+const DRINK_SEARCH_NAME_XABLAU_FETCH_URL = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=xablau';
 
 const mockFetchMethods = {
   mealsCase: (url) => (
@@ -72,6 +76,8 @@ const mockFetchMethods = {
   drinkCategoriesCase: (url) => (url === DRINKS_FETCH_CATEGORY_URL),
   mealIngredientsCase: (url) => (url === MEAL_FETCH_URL_DEFAULT),
   drinkIngredientsCase: (url) => (url === DRINK_INGREDIENTS_FETCH_URL_DEFAULT),
+  mealEmptyCase: (url) => (url === MEAL_SEARCH_NAME_XABLAU_FETCH_URL),
+  drinkEmptyCase: (url) => (url === DRINK_SEARCH_NAME_XABLAU_FETCH_URL),
   mealsByIngredientCase: (url) => (
     url === MEAL_FILTER_INGREDIENT_CHICKEN_FETCH_URL
         || url === MEAL_FILTER_INGREDIENT_BEFF_FETCH_URL
@@ -137,6 +143,12 @@ beforeEach(() => {
     }
     if (mockFetchMethods.oneDrinkCase(url)) {
       return { json: async () => oneDrink };
+    }
+    if (mockFetchMethods.mealEmptyCase(url)) {
+      return { json: async () => emptyMeals };
+    }
+    if (mockFetchMethods.drinkEmptyCase(url)) {
+      return { json: async () => emptyDrinks };
     }
   });
 });
@@ -589,6 +601,46 @@ describe('Teste da página Meals.js', () => {
 
         // AFERIR
         expect(oneDrinkRecipe).toBeInTheDocument();
+      });
+
+      test('4.1.7 - Buscar: verifique se ao realizar uma busca pelo nome "xablau", um alerta com a mensagem "Sorry, we haven\'t found any recipes for these filters." é exibido na tela', async () => {
+        // MOCK
+        const messageAlert = 'Sorry, we haven\'t found any recipes for these filters.';
+        // MOCK
+        jest.spyOn(global, 'alert').mockReturnValue(messageAlert);
+
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const { getByTestId } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+
+        // ACESSAR - captura o botão de busca no topo
+        const searchTopButton = getByTestId(SEARCH_TOP_BTN);
+
+        // AGIR - clica no botão captura
+        userEvent.click(searchTopButton);
+
+        // ACESSAR - captura o elemento de input
+        const searchInput = getByTestId(SEARCH_INPUT);
+
+        // AGIR - insere o termo de busca "xablau" no input
+        userEvent.type(searchInput, 'xablau');
+
+        // ACESSAR - filtro de busca por nome
+        const nameFilterButton = getByTestId(NAME_SEARCH_RADIO);
+
+        // AGIR - clickar no filtro de nome
+        userEvent.click(nameFilterButton);
+
+        // ACESSAR  - captura o botão que ativa o filtro de busca
+        const execSearchButton = getByTestId(EXEC_SEARCH_BTN);
+
+        // AGIR - clica no botao de ativação do filtro.
+        userEvent.click(execSearchButton);
+
+        await waitFor(() => {
+          // AFERIR
+          expect(global.alert).toHaveBeenCalled();
+          expect(global.alert).toHaveBeenCalledWith(messageAlert);
+        });
       });
     });
 
