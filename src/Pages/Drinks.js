@@ -7,7 +7,7 @@ import RecipeContext from '../context/RecipeContext';
 export default function Drinks() {
   const {
     drinks,
-    setDrinks,
+    // setDrinks,
     drinksCategoriesList,
   } = React.useContext(RecipeContext);
 
