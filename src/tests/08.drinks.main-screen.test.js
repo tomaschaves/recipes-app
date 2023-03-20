@@ -1,7 +1,8 @@
 import React from 'react';
-import { waitFor } from '@testing-library/react';
+import { waitFor, screen, findByTestId } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
+import Drinks from '../Pages/Drinks';
 import { renderWithRouterAndProvider } from './helpers/renderWithRouterAndProvider';
 import meals from './mockData/meals';
 import drinks from './mockData/drinks';
@@ -19,6 +20,7 @@ const PASSWORD_INPUT = 'password-input';
 const LOGIN_BUTTON = 'login-submit-btn';
 const VALID_EMAIL_TEST = 'teste@teste.gmail.com';
 const VALIDE_PASSWORD_TEST = '1234567';
+const DRINKS_BUTTON_BOTTON = 'drinks-bottom-btn'
 const MEALS_ROUTE = '/meals';
 const PROFILE_ROUTE = '/profile';
 const DRINKS_ROUTE = '/drinks';
@@ -28,8 +30,8 @@ const SEARCH_INPUT = 'search-input';
 const DRINKS_BOTTON_BTN = 'drinks-bottom-btn';
 const RECIPE_CARD_0 = '0-recipe-card';
 const SEARCH_TOP_BTN = 'search-top-btn';
-const BEEF_CATEGORY_FILTER = 'Beef-category-filter';
-const GOAT_CATEGORY_FILTER = 'Goat-category-filter';
+const ORDINARY_DRINK_CATEGORY_FILTER = 'Ordinary Drink-category-filter';
+const COCOA_CATEGORY_FILTER = 'Cocoa-category-filter';
 const INGREDIENT_SEARCH_RADIO = 'ingredient-search-radio';
 const NAME_SEARCH_RADIO = 'name-search-radio';
 const FIRST_LETTER_SEARCH_RADIO = 'first-letter-search-radio';
@@ -146,56 +148,47 @@ beforeEach(() => {
 
 afterEach(jest.restoreAllMocks);
 
-// FUNÇÃO PARA EFETUAR O LOGIN NA APLICAÇÃO
-const handleLogin = (getByTestId) => {
-  // DEFINIR
-  const emailInput = getByTestId(EMAIL_INPUT);
-  const passwordInput = getByTestId(PASSWORD_INPUT);
-  const loginButton = getByTestId(LOGIN_BUTTON);
+// FUNÇÃO LOGIN - efetua o login na aplicação e navega até a rota "/drinks"
+// const handleLogin = async (getByTestId, findByTestId) => {
+//   // DEFINIR
+//   const emailInput = getByTestId(EMAIL_INPUT);
+//   const passwordInput = getByTestId(PASSWORD_INPUT);
+//   const loginButton = getByTestId(LOGIN_BUTTON);
+  
+//   // AGIR
+//   userEvent.type(emailInput, VALID_EMAIL_TEST);
+//   userEvent.type(passwordInput, VALIDE_PASSWORD_TEST);
+//   userEvent.click(loginButton);
 
-  // AGIR
-  userEvent.type(emailInput, VALID_EMAIL_TEST);
-  userEvent.type(passwordInput, VALIDE_PASSWORD_TEST);
-  userEvent.click(loginButton);
-};
+//   // ACESSAR
+//   const drinksIcon = await findByTestId(DRINKS_BUTTON_BOTTON)
+
+//   // AGIR
+//   userEvent.click(drinksIcon)
+// };
 
 // screen.debug();
 
 describe('Teste da página Meals.js', () => {
-  describe('1 - Rota: Verifique se o componente "<Meals />" é renderizado na rota "/meals".', () => {
-    test('1.1 - Se o usuário é redirecionado para a rota "/meals" ao efetuar o login na aplicação.', async () => {
+  describe('1 - Rota: Verifique se o componente "<Drinks />" é renderizado na rota "/drinks".', () => {
+    test('1.1 - Se o título da página "Drinks" está presente no compoente renderizado e se a rota é "/drinks".', async () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { history, getByTestId, getByText } = renderWithRouterAndProvider(<App />);
+      const { history, getByTestId, getByText } = renderWithRouterAndProvider(<Drinks />, {initialEntries: ['/drinks']});
 
       // ACESSAR
-      const emailInput = getByTestId(EMAIL_INPUT);
-      const passwordInput = getByTestId(PASSWORD_INPUT);
-      const loginButton = getByTestId(LOGIN_BUTTON);
-
-      // AGIR
-      userEvent.type(emailInput, VALID_EMAIL_TEST);
-      userEvent.type(passwordInput, VALIDE_PASSWORD_TEST);
-      userEvent.click(loginButton);
-
-      // ACESSAR
-      const { pathname } = history.location;
-      const pageTitle = getByTestId('page-title');
-      const title = getByText('Meals');
+      const pageTitle = getByTestId('page-title')
+      const {location: { pathname } } = history;
 
       // AFERIR
-      expect(pathname).toBe(MEALS_ROUTE);
-      expect(title).toBeInTheDocument();
-      expect(pageTitle).toBeInTheDocument();
+      expect(pageTitle.innerHTML).toBe('Drinks')
+      expect(pathname).toBe(DRINKS_ROUTE)
     });
   });
 
   describe('2 - Navegação: Verifique os elementos renderizados no componente "<Meals />" que gerenciam a navegação para outras rotas.', () => {
     test('2.1 - Perfil: o usuário é redirecionado para a rota "/profile" ao pressionar o botão de "Perfil" no topo da aplicação', () => {
-      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { history, getByTestId } = renderWithRouterAndProvider(<App />);
-
-      // AGIR - LOGAR
-      handleLogin(getByTestId);
+       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+       const { history, getByTestId, getByText } = renderWithRouterAndProvider(<Drinks />, {initialEntries: ['/drinks']});
 
       // ACESSAR
       const profileIconButton = getByTestId('profile-top-btn');
@@ -212,10 +205,7 @@ describe('Teste da página Meals.js', () => {
 
     test('2.2 - Bebidas: o usuário é redirecionado para a rota "/drinks" ao pressionar o botão de "BEBIDAS" no rodapé da aplicação', () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { history, getByTestId } = renderWithRouterAndProvider(<App />);
-
-      // AGIR - LOGAR
-      handleLogin(getByTestId);
+      const { history, getByTestId, getByText } = renderWithRouterAndProvider(<Drinks />, {initialEntries: ['/drinks']});
 
       // ACESSAR
       const drinksButton = getByTestId(DRINKS_BOTTON_BTN);
@@ -232,10 +222,7 @@ describe('Teste da página Meals.js', () => {
 
     test('2.3 - Comidas: o usuário é redirecionado para a rota "/meals" ao pressionar o botão de "COMIDAS" no rodapé da aplicação', () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { history, getByTestId } = renderWithRouterAndProvider(<App />);
-
-      // AGIR - LOGAR
-      handleLogin(getByTestId);
+      const { history, getByTestId, getByText } = renderWithRouterAndProvider(<Drinks />, {initialEntries: ['/drinks']});
 
       // ACESSAR
       const mealsButton = getByTestId('meals-bottom-btn');
@@ -252,64 +239,32 @@ describe('Teste da página Meals.js', () => {
 
     test('2.4 - Receita: o usuário é redirecionado para a rota "/meals/52977" ao pressionar a imagem da receita "Corba" a partir da rota "/meals".', async () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { history, getByTestId, findByTestId } = renderWithRouterAndProvider(<App />);
+      const { history, getByTestId, getByText, findByTestId } = renderWithRouterAndProvider(<App />, {initialEntries: ['/drinks']});
 
-      // AGIR - LOGAR
-      handleLogin(getByTestId);
-
+      
       // ACESSAR
       await waitFor(() => findByTestId(RECIPE_CARD_0));
-      const corbaRecipe = getByTestId(RECIPE_CARD_0);
-
+      const GGRecipe = getByTestId(RECIPE_CARD_0);
+      
       // AGIR
-      userEvent.click(corbaRecipe);
-
+      userEvent.click(GGRecipe);
+      
       // ACESSAR
+      const recipePhoto = await findByTestId('recipe-photo')
       const { location: { pathname } } = history;
 
-      // AFERIR
-      expect(pathname).toBe(CORBA_RECIPE);
-    });
-
-    test('2.5 - Receita: o usuário é redirecionado para a rota "/drinks/15997" ao pressionar a imagem da receita "GG" a partir da rota "/drinks".', async () => {
-      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const {
-        history,
-        getByTestId,
-        findByTestId,
-      } = renderWithRouterAndProvider(<App />);
-
-      // AGIR - LOGAR
-      handleLogin(getByTestId);
-
-      //  ACESSAR
-      const drinksButton = getByTestId(DRINKS_BOTTON_BTN);
-
-      userEvent.click(drinksButton);
-
-      // ACESSAR
-      const ggDrinks = await findByTestId(RECIPE_CARD_0);
-
-      // AGIR
-      userEvent.click(ggDrinks);
-
-      // ACESSAR
-      const { location: { pathname } } = history;
-
+      console.log(pathname);
+      
+      screen.debug();
       // AFERIR
       expect(pathname).toBe(GG_DRINK);
     });
   });
 
-  describe('3 - Renderização: Verifique se os elementos do componente "<Meals />" estão presentes e/ou visiveis na tela.', () => {
-    test('3.1 - <Meals /> - verifique se o botão de perfil está visível na tela.', () => {
+  describe('3 - Renderização: Verifique se os elementos do componente "<Drinks />" estão presentes e/ou visiveis na tela.', () => {
+    test('3.1 - <Drinks /> - verifique se o botão de perfil está visível na tela.', () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const {
-        getByTestId,
-      } = renderWithRouterAndProvider(<App />);
-
-      // AGIR - LOGAR
-      handleLogin(getByTestId);
+      const { history, getByTestId, getByText, findByTestId } = renderWithRouterAndProvider(<App />, {initialEntries: ['/drinks']});
 
       //  ACESSAR
       const profileButton = getByTestId('profile-top-btn');
@@ -318,14 +273,9 @@ describe('Teste da página Meals.js', () => {
       expect(profileButton).toBeVisible();
     });
 
-    test('3.2 - <Meals /> - verifique se o botão de busca está visível na tela.', () => {
+    test('3.2 - <Drinks /> - verifique se o botão de busca está visível na tela.', () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const {
-        getByTestId,
-      } = renderWithRouterAndProvider(<App />);
-
-      // AGIR - LOGAR
-      handleLogin(getByTestId);
+      const { history, getByTestId, getByText, findByTestId } = renderWithRouterAndProvider(<App />, {initialEntries: ['/drinks']});
 
       //  ACESSAR
       const searchButton = getByTestId(SEARCH_TOP_BTN);
@@ -334,14 +284,9 @@ describe('Teste da página Meals.js', () => {
       expect(searchButton).toBeVisible();
     });
 
-    test('3.3 - <Meals /> - verifique se o título da página está visível na tela.', () => {
+    test('3.3 - <Drinks /> - verifique se o título da página está visível na tela.', () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const {
-        getByTestId,
-      } = renderWithRouterAndProvider(<App />);
-
-      // AGIR - LOGAR
-      handleLogin(getByTestId);
+      const { history, getByTestId, getByText, findByTestId } = renderWithRouterAndProvider(<App />, {initialEntries: ['/drinks']});
 
       //  ACESSAR
       const pageTitle = getByTestId('page-title');
@@ -350,47 +295,33 @@ describe('Teste da página Meals.js', () => {
       expect(pageTitle).toBeVisible();
     });
 
-    test('3.4 - <Meals /> - verifique se os botões de filtro, "Beef", "Breakfast", Chicken, "Dessert" e "goat" estão visiveis na tela.', async () => {
+    test('3.4 - <Drinks /> - verifique se os botões de filtro, "Ordinary Drink", "Cocktail", "Shake", "Other / Unknown", "Cocoa" e "All" estão visiveis na tela.', async () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const {
-        getByTestId,
-        findByTestId,
-      } = renderWithRouterAndProvider(<App />);
-
-      // AGIR - LOGAR
-      handleLogin(getByTestId);
+      const { history, getByTestId, getByText, findByTestId } = renderWithRouterAndProvider(<App />, {initialEntries: ['/drinks']});
 
       // AGIR
-      await waitFor(() => findByTestId(BEEF_CATEGORY_FILTER));
-      // await waitFor(() => findByTestId('Ordinary Drink-category-filter'));
+      await waitFor(() => findByTestId(ORDINARY_DRINK_CATEGORY_FILTER));
 
       // ACESSAR
-      const beefCategoryFilterRadio = await findByTestId(BEEF_CATEGORY_FILTER);
-      const breakfastCategoryFilterRadio = getByTestId('Breakfast-category-filter');
-      const chickenCategoryFilterRadio = getByTestId('Chicken-category-filter');
-      const dessertCategoryFilterRadio = getByTestId('Dessert-category-filter');
-      const goatCategoryFilterRadio = getByTestId(GOAT_CATEGORY_FILTER);
+      const beefCategoryFilterRadio = await findByTestId(ORDINARY_DRINK_CATEGORY_FILTER);
+      const cocktailCategoryFilterRadio = getByTestId('Cocktail-category-filter');
+      const shakeCategoryFilterRadio = getByTestId('Shake-category-filter');
+      const otherAndUnknownCategoryFilterRadio = getByTestId('Other/Unknown-category-filter');
+      const cocoaCategoryFilterRadio = getByTestId(COCOA_CATEGORY_FILTER);
       const resetFilterAllCategoryButton = getByTestId('All-category-filter');
 
       // AFERIR
       expect(beefCategoryFilterRadio).toBeVisible();
-      expect(breakfastCategoryFilterRadio).toBeVisible();
-      expect(chickenCategoryFilterRadio).toBeVisible();
-      expect(dessertCategoryFilterRadio).toBeVisible();
-      expect(goatCategoryFilterRadio).toBeVisible();
+      expect(cocktailCategoryFilterRadio).toBeVisible();
+      expect(shakeCategoryFilterRadio).toBeVisible();
+      expect(otherAndUnknownCategoryFilterRadio).toBeVisible();
+      expect(cocoaCategoryFilterRadio).toBeVisible();
       expect(resetFilterAllCategoryButton).toBeVisible();
     });
 
-    test('3.5 - <Meals /> - verifique se as 12 primeiras receitas, contendo imagem e nome, estão visiveis na tela', async () => {
+    test('3.5 - <Drinks /> - verifique se as 12 primeiras receitas, contendo imagem e nome, estão visiveis na tela', async () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const {
-        getByTestId,
-        getAllByTestId,
-        findAllByTestId,
-      } = renderWithRouterAndProvider(<App />);
-
-      // AGIR - LOGAR
-      handleLogin(getByTestId);
+      const { history, getByTestId, getByText, findByTestId, findAllByTestId, getAllByTestId } = renderWithRouterAndProvider(<App />, {initialEntries: ['/drinks']});
 
       // AGIR
       // await waitFor(() => findByTestId('11-recipe-card'));
@@ -409,14 +340,9 @@ describe('Teste da página Meals.js', () => {
       twelveRecipesNAme.map((img) => expect(img).toBeVisible());
     });
 
-    test('3.6 - <Meals /> - verifique se o botão de filtro de bebidas está visível na tela.', () => {
+    test('3.6 - <Drinks /> - verifique se o botão de filtro de bebidas está visível na tela.', () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const {
-        getByTestId,
-      } = renderWithRouterAndProvider(<App />);
-
-      // AGIR - LOGAR
-      handleLogin(getByTestId);
+      const { history, getByTestId, getByText, findByTestId, findAllByTestId, getAllByTestId } = renderWithRouterAndProvider(<App />, {initialEntries: ['/drinks']});
 
       //  ACESSAR
       const drinksBottomButton = getByTestId(DRINKS_BOTTON_BTN);
@@ -425,14 +351,9 @@ describe('Teste da página Meals.js', () => {
       expect(drinksBottomButton).toBeVisible();
     });
 
-    test('3.7 - <Meals /> - verifique se o botão de filtro de comidas está visível na tela.', () => {
+    test('3.7 - <Drinks /> - verifique se o botão de filtro de comidas está visível na tela.', () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const {
-        getByTestId,
-      } = renderWithRouterAndProvider(<App />);
-
-      // AGIR - LOGAR
-      handleLogin(getByTestId);
+      const { history, getByTestId, getByText, findByTestId, findAllByTestId, getAllByTestId } = renderWithRouterAndProvider(<App />, {initialEntries: ['/drinks']});
 
       //  ACESSAR
       const mealsBottomButton = getByTestId('meals-bottom-btn');
@@ -441,15 +362,9 @@ describe('Teste da página Meals.js', () => {
       expect(mealsBottomButton).toBeVisible();
     });
 
-    test('3.8 - <Meals /> - verifique se o formulário de busca não está presente na tela ao efetuar o login.', () => {
+    test('3.8 - <Drinks /> - verifique se o formulário de busca não está presente na tela ao efetuar o login.', () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const {
-        getByTestId,
-        queryByTestId,
-      } = renderWithRouterAndProvider(<App />);
-
-      // AGIR - LOGAR
-      handleLogin(getByTestId);
+      const { history, getByTestId, getByText, findByTestId, findAllByTestId, getAllByTestId, queryByTestId } = renderWithRouterAndProvider(<App />, {initialEntries: ['/drinks']});
 
       // ACESSAR
       const searchInput = queryByTestId(SEARCH_INPUT);
@@ -466,15 +381,9 @@ describe('Teste da página Meals.js', () => {
       expect(SearchExecButton).toBeNull();
     });
 
-    test('3.9 - <Meals /> - verifique se o formulário de busca está presente na tela após pressionar o botão de "Busca".', async () => {
+    test.only('3.9 - <Drinks /> - verifique se o formulário de busca está presente na tela após pressionar o botão de "Busca".', async () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const {
-        getByTestId,
-        findByTestId,
-      } = renderWithRouterAndProvider(<App />);
-
-      // AGIR - LOGAR
-      handleLogin(getByTestId);
+      const { history, getByTestId, getByText, findByTestId, findAllByTestId, getAllByTestId, queryByTestId } = renderWithRouterAndProvider(<App />, {initialEntries: ['/drinks']});
 
       // ACESSAR
       const searchButton = getByTestId(SEARCH_TOP_BTN);
@@ -743,7 +652,7 @@ describe('Teste da página Meals.js', () => {
         handleLogin(getByTestId);
 
         // ACESSAR - capturar filtro Beff
-        const beffFilter = await findByTestId(BEEF_CATEGORY_FILTER);
+        const beffFilter = await findByTestId(ORDINARY_DRINK_CATEGORY_FILTER);
 
         // AGIR - pressionar de filtro capturado
         userEvent.click(beffFilter);
@@ -839,7 +748,7 @@ describe('Teste da página Meals.js', () => {
         handleLogin(getByTestId);
 
         // ACESSAR - capturar filtro Beff
-        const goatFilter = await findByTestId(GOAT_CATEGORY_FILTER);
+        const goatFilter = await findByTestId(COCOA_CATEGORY_FILTER);
 
         // AGIR - pressionar de filtro capturado
         userEvent.click(goatFilter);
@@ -863,7 +772,7 @@ describe('Teste da página Meals.js', () => {
         handleLogin(getByTestId);
 
         // ACESSAR - capturar filtro Beff
-        const goatFilter = await findByTestId(GOAT_CATEGORY_FILTER);
+        const goatFilter = await findByTestId(COCOA_CATEGORY_FILTER);
 
         // AGIR - pressionar de filtro capturado
         userEvent.click(goatFilter);
