@@ -16,11 +16,11 @@ export default function Drinks() {
   const emptyFilter = {}; // para renderizar o padrão da função filterClick
   const [categoryClicked, setCategoryClicked] = React.useState(emptyFilter); // para usar na lógica do filterClick
 
-  React.useEffect(() => {
-    if (!drinks) {
-      setDrinks(drinks);
-    }
-  }, [drinks, setDrinks]);
+  // React.useEffect(() => {
+  //   if (!drinks) {
+  //     setDrinks(drinks);
+  //   }
+  // }, [drinks, setDrinks]);
 
   const filterCategory = async (theme) => {
     // para filtrar as bebidas pela categoria escolhida pelos radio button

@@ -16,11 +16,11 @@ export default function Meals() {
   const emptyFilter = {}; // para renderizar o padrão da função filterClick
   const [categoryClicked, setCategoryClicked] = useState(emptyFilter); // para usar na lógica do filterClick
 
-  useEffect(() => {
-    if (!meals) {
-      setMeals(meals);
-    }
-  }, [meals, setMeals]);
+  // useEffect(() => {
+  //   if (!meals) {
+  //     setMeals(meals);
+  //   }
+  // }, [meals, setMeals]);
 
   const filterCategory = async (theme) => {
     // para filtrar as bebidas pela categoria escolhida pelos radio button

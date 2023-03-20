@@ -731,7 +731,7 @@ describe('Teste da página Meals.js', () => {
     });
 
     describe('4.2 - Teste a funcionalidade de filtar', () => {
-      test('4.2.1 - Filtrar: verifique se ao selecionar o filtro "Beef", a receita "Brown Stew Chicken" está presente na tela.', async () => {
+      test('4.2.1 - Filtrar: verifique se ao selecionar o filtro "Beef", a receita "Brown Stew Chicken" está presente na tela, e, ao clicar novamente no filtro "Beef", o filtro é resetado e a receita "Corba" está presente na tela.', async () => {
         // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
         const {
           getByTestId,
@@ -753,9 +753,18 @@ describe('Teste da página Meals.js', () => {
 
         // AFERIR
         expect(brownStewChicken).toBeVisible();
+
+        // AGIR
+        userEvent.click(beffFilter);
+
+        // ACESAR
+        const resetFilterOrdinaryDrink = await findByAltText('Corba');
+
+        // AFERIR
+        expect(resetFilterOrdinaryDrink).toBeVisible();
       });
 
-      test('4.2.2 - Filtrar: verifique se ao selecionar o filtro "Breakfast", a receita "Brown Stew Chicken" está presente na tela', async () => {
+      test('4.2.2 - Filtrar: verifique se ao selecionar o filtro "Breakfast", a receita "Brown Stew Chicken" está presente na tela, e, ao clicar novamente no filtro "Breakfast", o filtro é resetado e a receita "Corba" está presente na tela.', async () => {
         // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
         const {
           getByTestId,
@@ -777,9 +786,18 @@ describe('Teste da página Meals.js', () => {
 
         // AFERIR
         expect(brownStewChicken).toBeVisible();
+
+        // AGIR
+        userEvent.click(breakfastFilter);
+
+        // ACESAR
+        const resetFilterOrdinaryDrink = await findByAltText('Corba');
+
+        // AFERIR
+        expect(resetFilterOrdinaryDrink).toBeVisible();
       });
 
-      test('4.2.3 - Filtrar: verifique se ao selecionar o filtro "Chicken", a receita "Brown Stew Chicken" está presente na tela.', async () => {
+      test('4.2.3 - Filtrar: verifique se ao selecionar o filtro "Chicken", a receita "Brown Stew Chicken" está presente na tela, e, ao clicar novamente no filtro "Chicken", o filtro é resetado e a receita "Corba" está presente na tela.', async () => {
         // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
         const {
           getByTestId,
@@ -801,9 +819,18 @@ describe('Teste da página Meals.js', () => {
 
         // AFERIR
         expect(brownStewChicken).toBeVisible();
+
+        // AGIR
+        userEvent.click(chickenFilter);
+
+        // ACESAR
+        const resetFilterOrdinaryDrink = await findByAltText('Corba');
+
+        // AFERIR
+        expect(resetFilterOrdinaryDrink).toBeVisible();
       });
 
-      test('4.2.4 - Filtrar: verifique se ao selecionar o filtro "Dessert",a receita "Brown Stew Chicken" está presente na tela.', async () => {
+      test('4.2.4 - Filtrar: verifique se ao selecionar o filtro "Dessert",a receita "Brown Stew Chicken" está presente na tela, e, ao clicar novamente no filtro "Dessert", o filtro é resetado e a receita "Corba" está presente na tela.', async () => {
         // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
         const {
           getByTestId,
@@ -825,9 +852,18 @@ describe('Teste da página Meals.js', () => {
 
         // AFERIR
         expect(brownStewChicken).toBeVisible();
+
+        // AGIR
+        userEvent.click(dessertFilter);
+
+        // ACESAR
+        const resetFilterOrdinaryDrink = await findByAltText('Corba');
+
+        // AFERIR
+        expect(resetFilterOrdinaryDrink).toBeVisible();
       });
 
-      test('4.2.5 - Filtrar: verifique se ao selecionar o filtro "Goat", a receita "Brown Stew Chicken" está presente na tela.', async () => {
+      test('4.2.5 - Filtrar: verifique se ao selecionar o filtro "Goat", a receita "Brown Stew Chicken" está presente na tela, e, ao clicar novamente no filtro "Goat", o filtro é resetado e a receita "Corba" está presente na tela.', async () => {
         // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
         const {
           getByTestId,
@@ -849,6 +885,15 @@ describe('Teste da página Meals.js', () => {
 
         // AFERIR
         expect(brownStewChicken).toBeVisible();
+
+        // AGIR
+        userEvent.click(goatFilter);
+
+        // ACESAR
+        const resetFilterOrdinaryDrink = await findByAltText('Corba');
+
+        // AFERIR
+        expect(resetFilterOrdinaryDrink).toBeVisible();
       });
 
       test('4.2.6 - Filtrar: verifique se ao selecionar o filtro "Goat" e pressionar o botão "All" para limpar os filtros, a receita "Corba" está presente na tela', async () => {
@@ -879,6 +924,48 @@ describe('Teste da página Meals.js', () => {
 
         // AFERIR
         expect(corbaRecipe).toBeVisible();
+      });
+      test('4.2.7 - Filtrar: verifique se ao filtrar pela busca de ingrediente utilizando o termo "chicken", pressionar o botão de filtro por categoria "Beef", resetar o filtro pressionando novamente o filtro de categoria "Beef", a receita "Brown Stew Chicken" é renderizada novamente na tela.', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByAltText,
+          findByTestId,
+        } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
+
+        // ACESSAR - captura o botão de busca no topo
+        const searchTopButton = getByTestId(SEARCH_TOP_BTN);
+
+        // AGIR - clica no botão captura
+        userEvent.click(searchTopButton);
+
+        // ACESSAR - captura o elemento de input
+        const searchInput = getByTestId(SEARCH_INPUT);
+
+        // AGIR - insere o termo de busca "chicken" no input
+        userEvent.type(searchInput, 'chicken');
+
+        // ACESSAR  - captura o botão que ativa o filtro de busca
+        const execSearchButton = getByTestId(EXEC_SEARCH_BTN);
+
+        // AGIR - clica no botao de ativação do filtro.
+        userEvent.click(execSearchButton);
+
+        // ACESSAR - captura o botão de filtro por categoria "Beef"
+        const beefButtonCategoryFilter = await findByTestId('Beef-category-filter');
+
+        // AGIR
+        userEvent.click(beefButtonCategoryFilter);
+        userEvent.click(beefButtonCategoryFilter);
+
+        // ACESSAR
+        const brownStewChickenRecipe = await findByAltText(BROWN_STEW_CHICKEN);
+
+        // AFERIR
+        expect(brownStewChickenRecipe).toBeInTheDocument();
       });
     });
   });
