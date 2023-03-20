@@ -67,6 +67,7 @@ const DRINK_RANDOM_RECIPE_FETCH_URL = 'https://www.thecocktaildb.com/api/json/v1
 const DRINK_ID_178319_RECIPE_FETCH_URL = 'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=178319';
 const DRINK_ID_15997_RECIPE_FETCH_URL = 'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=15997';
 const DRINK_NAME_AQUAMARINE_RECIPE_FETCH_URL = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=Aquamarine';
+const DRINK_FIRST_LETTER_A_RECIPE_FETCH_URL = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?f=a'
 
 const mockFetchMethods = {
   mealsCase: (url) => (
@@ -102,9 +103,10 @@ const mockFetchMethods = {
     || url === MEAL_ID_52771_RECIPE_FETCH_URL
     || url === MEAL_ID_52977_RECIPE_FETCH_URL
     || url === MEAL_FIRST_LETTER_A_RECIPE_FETCH_URL
-  ),
-  oneDrinkCase: (url) => (
-    url === DRINK_NAME_AQUAMARINE_RECIPE_FETCH_URL
+    ),
+    oneDrinkCase: (url) => (
+    url === DRINK_FIRST_LETTER_A_RECIPE_FETCH_URL
+    || url === DRINK_NAME_AQUAMARINE_RECIPE_FETCH_URL
     || url === DRINK_RANDOM_RECIPE_FETCH_URL
     || url === DRINK_ID_178319_RECIPE_FETCH_URL
     || url === DRINK_ID_15997_RECIPE_FETCH_URL
@@ -185,7 +187,7 @@ describe('Teste da página Meals.js', () => {
     });
   });
 
-  describe('2 - Navegação: Verifique os elementos renderizados no componente "<Meals />" que gerenciam a navegação para outras rotas.', () => {
+  describe('2 - Navegação: Verifique os elementos renderizados no componente "<Drinks />" que gerenciam a navegação para outras rotas.', () => {
     test('2.1 - Perfil: o usuário é redirecionado para a rota "/profile" ao pressionar o botão de "Perfil" no topo da aplicação', () => {
        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
        const { history, getByTestId, getByText } = renderWithRouterAndProvider(<Drinks />, {initialEntries: ['/drinks']});
@@ -381,7 +383,7 @@ describe('Teste da página Meals.js', () => {
       expect(SearchExecButton).toBeNull();
     });
 
-    test.only('3.9 - <Drinks /> - verifique se o formulário de busca está presente na tela após pressionar o botão de "Busca".', async () => {
+    test('3.9 - <Drinks /> - verifique se o formulário de busca está presente na tela após pressionar o botão de "Busca".', async () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
       const { history, getByTestId, getByText, findByTestId, findAllByTestId, getAllByTestId, queryByTestId } = renderWithRouterAndProvider(<App />, {initialEntries: ['/drinks']});
 
@@ -408,17 +410,11 @@ describe('Teste da página Meals.js', () => {
     });
   });
 
-  describe('4 - Teste as funcionalidades do componente <Meals />', () => {
+  describe('4 - Teste as funcionalidades do componente <Drinks />', () => {
     describe('4.1 - Teste a funcionalidade de "Buscar".', () => {
-      test('4.1.1 - Buscar: verifique se ao realizar uma busca por ingrediente com o input vazio, a primeira receita é "Corba"', async () => {
-        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const {
-          getByTestId,
-          findByAltText,
-        } = renderWithRouterAndProvider(<App />);
-
-        // AGIR - LOGAR
-        handleLogin(getByTestId);
+      test('4.1.1 - Buscar: verifique se ao realizar uma busca por ingrediente com o input vazio, a primeira receita é "151 Florida Bushwacker"', async () => {
+      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+      const { history, getByTestId, getByText, findByTestId, findAllByTestId, getAllByTestId, queryByTestId, findByAltText } = renderWithRouterAndProvider(<App />, {initialEntries: ['/drinks']});
 
         // ACESSAR - captura o botão de busca no topo
         const searchTopButton = getByTestId(SEARCH_TOP_BTN);
@@ -439,23 +435,17 @@ describe('Teste da página Meals.js', () => {
         userEvent.click(execSearchButton);
 
         // ACESSAR
-        const corbaRecipe = await findByAltText('Corba');
+        const firstDrinkRecipe = await findByAltText('151 Florida Bushwacker');
 
         // AFERIR
-        expect(corbaRecipe).toBeInTheDocument();
+        expect(firstDrinkRecipe).toBeInTheDocument();
 
         // screen.debug();
       });
 
-      test('4.1.2 - Buscar: verifique se ao realizar uma busca por nome com o input vazio, a primeira receita é "Corba"', async () => {
-        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const {
-          getByTestId,
-          findByAltText,
-        } = renderWithRouterAndProvider(<App />);
-
-        // AGIR - LOGAR
-        handleLogin(getByTestId);
+      test('4.1.2 - Buscar: verifique se ao realizar uma busca por nome com o input vazio, a primeira receita é "GG"', async () => {
+      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+      const { history, getByTestId, getByText, findByTestId, findAllByTestId, getAllByTestId, queryByTestId, findByAltText } = renderWithRouterAndProvider(<App />, {initialEntries: ['/drinks']});
 
         // ACESSAR - captura o botão de busca no topo
         const searchTopButton = getByTestId(SEARCH_TOP_BTN);
@@ -476,22 +466,18 @@ describe('Teste da página Meals.js', () => {
         userEvent.click(execSearchButton);
 
         // ACESSAR
-        const corbaRecipe = await findByAltText('Corba');
+        const firstDrinkRecipe = await findByAltText('GG');
 
         // AFERIR
-        expect(corbaRecipe).toBeInTheDocument();
-
-        // screen.debug();
+        expect(firstDrinkRecipe).toBeInTheDocument();
       });
 
       test('4.1.3 - Buscar: verifique se ao realizar uma busca pela primeira letra com o input vazio, o alerta "Your search must have only 1 (one) character" é exibido na tela.', async () => {
         // MOCK
         jest.spyOn(global, 'alert').mockReturnValue('Your search must have only 1 (one) character');
-        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const { getByTestId } = renderWithRouterAndProvider(<App />);
 
-        // AGIR - LOGAR
-        handleLogin(getByTestId);
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const { history, getByTestId, getByText, findByTestId, findAllByTestId, getAllByTestId, queryByTestId, findByAltText } = renderWithRouterAndProvider(<App />, {initialEntries: ['/drinks']});
 
         // ACESSAR - captura o botão de busca no topo
         const searchTopButton = getByTestId(SEARCH_TOP_BTN);
@@ -511,25 +497,13 @@ describe('Teste da página Meals.js', () => {
         // AGIR - clica no botao de ativação do filtro.
         userEvent.click(execSearchButton);
 
-        // ACESSAR
-        // const ondeCharacterText = await findByText('Your search must have only 1 (one) character');
-
         // AFERIR
         expect(global.alert).toHaveBeenCalled();
-        // expect(ondeCharacterText).toBeVisible();
-
-        // screen.debug();
       });
 
-      test('4.1.4 - Buscar: verifique se ao realizar uma busca de ingrediente pelo termo "chicken", a primeira receita é "Brown Stew Chicken"', async () => {
-        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const {
-          getByTestId,
-          findByAltText,
-        } = renderWithRouterAndProvider(<App />);
-
-        // AGIR - LOGAR
-        handleLogin(getByTestId);
+      test('4.1.4 - Buscar: verifique se ao realizar uma busca de ingrediente pelo termo "Light rum", a primeira receita é "Brown Stew Chicken"', async () => {
+      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+      const { history, getByTestId, getByText, findByTestId, findAllByTestId, getAllByTestId, queryByTestId, findByAltText } = renderWithRouterAndProvider(<App />, {initialEntries: ['/drinks']});
 
         // ACESSAR - captura o botão de busca no topo
         const searchTopButton = getByTestId(SEARCH_TOP_BTN);
@@ -541,7 +515,7 @@ describe('Teste da página Meals.js', () => {
         const searchInput = getByTestId(SEARCH_INPUT);
 
         // AGIR - insere o termo de busca "chicken" no input
-        userEvent.type(searchInput, 'chicken');
+        userEvent.type(searchInput, 'Light rum');
 
         // ACESSAR  - captura o botão que ativa o filtro de busca
         const execSearchButton = getByTestId(EXEC_SEARCH_BTN);
@@ -550,21 +524,15 @@ describe('Teste da página Meals.js', () => {
         userEvent.click(execSearchButton);
 
         // ACESSAR
-        const brownStewChickenRecipe = await findByAltText(BROWN_STEW_CHICKEN);
+        const firstDrinkRecipe = await findByAltText('151 Florida Bushwacker');
 
         // AFERIR
-        expect(brownStewChickenRecipe).toBeInTheDocument();
+        expect(firstDrinkRecipe).toBeInTheDocument();
       });
 
-      test('4.1.5 - Buscar: verifique se ao realizar uma busca pelo nome, utilizando o termo "arrabiata", a primeira receita é "Spicy Arrabiata Penne"', async () => {
-        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const {
-          getByTestId,
-          findByAltText,
-        } = renderWithRouterAndProvider(<App />);
-
-        // AGIR - LOGAR
-        handleLogin(getByTestId);
+      test('4.1.5 - Buscar: verifique se ao realizar uma busca pelo nome, utilizando o termo "Aquamarine", a primeira receita é "Aquamarine"', async () => {
+      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+      const { history, getByTestId, getByText, findByTestId, findAllByTestId, getAllByTestId, queryByTestId, findByAltText } = renderWithRouterAndProvider(<App />, {initialEntries: ['/drinks']});
 
         // ACESSAR - captura o botão de busca no topo
         const searchTopButton = getByTestId(SEARCH_TOP_BTN);
@@ -576,7 +544,7 @@ describe('Teste da página Meals.js', () => {
         const searchInput = getByTestId(SEARCH_INPUT);
 
         // AGIR - insere o termo de busca "chicken" no input
-        userEvent.type(searchInput, 'Arrabiata');
+        userEvent.type(searchInput, 'Aquamarine');
 
         // ACESSAR - filtro de nome
         const nameFilterRadio = getByTestId(NAME_SEARCH_RADIO);
@@ -591,21 +559,15 @@ describe('Teste da página Meals.js', () => {
         userEvent.click(execSearchButton);
 
         // ACESSAR
-        const spicyArrabiataPenneRecipe = await findByAltText('Spicy Arrabiata Penne');
+        const oneDrinkRecipe = await findByAltText('Aquamarine');
 
         // AFERIR
-        expect(spicyArrabiataPenneRecipe).toBeInTheDocument();
+        expect(oneDrinkRecipe).toBeInTheDocument();
       });
 
-      test('4.1.6 - Buscar: verifique se ao realizar uma busca pela primeira letra, utilizando o termo "a", a primeira receita é "Spicy Arrabiata Penne"', async () => {
-        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const {
-          getByTestId,
-          findByAltText,
-        } = renderWithRouterAndProvider(<App />);
-
-        // AGIR - LOGAR
-        handleLogin(getByTestId);
+      test.only('4.1.6 - Buscar: verifique se ao realizar uma busca pela primeira letra, utilizando o termo "a", a primeira receita é "Aquamarine"', async () => {
+      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+      const { history, getByTestId, getByText, findByTestId, findAllByTestId, getAllByTestId, queryByTestId, findByAltText } = renderWithRouterAndProvider(<App />, {initialEntries: ['/drinks']});
 
         // ACESSAR - captura o botão de busca no topo
         const searchTopButton = getByTestId(SEARCH_TOP_BTN);
@@ -632,10 +594,10 @@ describe('Teste da página Meals.js', () => {
         userEvent.click(execSearchButton);
 
         // ACESSAR
-        const spicyArrabiataPenneRecipe = await findByAltText('Spicy Arrabiata Penne');
+        const oneDrinkRecipe = await findByAltText('Aquamarine');
 
         // AFERIR
-        expect(spicyArrabiataPenneRecipe).toBeInTheDocument();
+        expect(oneDrinkRecipe).toBeInTheDocument();
       });
     });
 
