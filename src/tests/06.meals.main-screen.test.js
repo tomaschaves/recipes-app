@@ -3,15 +3,16 @@ import { waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
 import { renderWithRouterAndProvider } from './helpers/renderWithRouterAndProvider';
-import meals from '../../cypress/mocks/meals';
-import drinks from '../../cypress/mocks/drinks';
-import mealCategories from '../../cypress/mocks/mealCategories';
-import drinkCategories from '../../cypress/mocks/drinkCategories';
-import mealsByIngredient from '../../cypress/mocks/mealsByIngredient';
-import drinksByIngredient from '../../cypress/mocks/drinksByIngredient';
-import oneMeal from '../../cypress/mocks/oneMeal';
-import oneDrink from '../../cypress/mocks/oneDrink';
-import drinkIngredients from '../../cypress/mocks/drinkIngredients';
+import meals from './mockData/meals';
+import drinks from './mockData/drinks';
+import mealCategories from './mockData/mealCategories';
+import drinkCategories from './mockData/drinkCategories';
+import mealsByIngredient from './mockData/mealsByIngredient';
+import drinksByIngredient from './mockData/drinksByIngredient';
+import oneMeal from './mockData/oneMeal';
+import oneDrink from './mockData/oneDrink';
+import mealIngredients from './mockData/mealIngredients';
+import drinkIngredients from './mockData/drinkIngredients';
 
 const EMAIL_INPUT = 'email-input';
 const PASSWORD_INPUT = 'password-input';
@@ -127,6 +128,9 @@ beforeEach(() => {
     }
     if (mockFetchMethods.drinksByIngredientCase(url)) {
       return { json: async () => drinksByIngredient };
+    }
+    if (mockFetchMethods.mealIngredientsCase(url)) {
+      return { json: async () => mealIngredients };
     }
     if (mockFetchMethods.drinkIngredientsCase(url)) {
       return { json: async () => drinkIngredients };
