@@ -1,8 +1,7 @@
 import React from 'react';
-import { waitFor, screen } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
-import Drinks from '../Pages/Drinks';
 import { renderWithRouterAndProvider } from './helpers/renderWithRouterAndProvider';
 import meals from './mockData/meals';
 import drinks from './mockData/drinks';
@@ -17,21 +16,27 @@ import drinkIngredients from './mockData/drinkIngredients';
 import emptyMeals from './mockData/emptyMeals';
 import emptyDrinks from './mockData/emptyDrinks';
 
+const EMAIL_INPUT = 'email-input';
+const PASSWORD_INPUT = 'password-input';
+const LOGIN_BUTTON = 'login-submit-btn';
+const VALID_EMAIL_TEST = 'teste@teste.gmail.com';
+const VALIDE_PASSWORD_TEST = '1234567';
 const MEALS_ROUTE = '/meals';
 const PROFILE_ROUTE = '/profile';
 const DRINKS_ROUTE = '/drinks';
+const CORBA_RECIPE = '/meals/52977';
 const GG_DRINK = '/drinks/15997';
 const SEARCH_INPUT = 'search-input';
 const DRINKS_BOTTON_BTN = 'drinks-bottom-btn';
 const RECIPE_CARD_0 = '0-recipe-card';
 const SEARCH_TOP_BTN = 'search-top-btn';
-const ORDINARY_DRINK_CATEGORY_FILTER = 'Ordinary Drink-category-filter';
-const COCOA_CATEGORY_FILTER = 'Cocoa-category-filter';
+const BEEF_CATEGORY_FILTER = 'Beef-category-filter';
+const GOAT_CATEGORY_FILTER = 'Goat-category-filter';
 const INGREDIENT_SEARCH_RADIO = 'ingredient-search-radio';
 const NAME_SEARCH_RADIO = 'name-search-radio';
 const FIRST_LETTER_SEARCH_RADIO = 'first-letter-search-radio';
 const EXEC_SEARCH_BTN = 'exec-search-btn';
-const FLORIDA_BUSHWACKER = '151 Florida Bushwacker';
+const BROWN_STEW_CHICKEN = 'Brown Stew Chicken';
 
 const MEAL_FETCH_URL_DEFAULT = 'https://www.themealdb.com/api/json/v1/1/filter.php?i=';
 const MEAL_NAME_FETCH_URL_EMPTY = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
@@ -155,47 +160,56 @@ beforeEach(() => {
 
 afterEach(jest.restoreAllMocks);
 
-// FUNÇÃO LOGIN - efetua o login na aplicação e navega até a rota "/drinks"
-// const handleLogin = async (getByTestId, findByTestId) => {
-//   // DEFINIR
-//   const emailInput = getByTestId(EMAIL_INPUT);
-//   const passwordInput = getByTestId(PASSWORD_INPUT);
-//   const loginButton = getByTestId(LOGIN_BUTTON);
+// FUNÇÃO PARA EFETUAR O LOGIN NA APLICAÇÃO
+const handleLogin = (getByTestId) => {
+  // DEFINIR
+  const emailInput = getByTestId(EMAIL_INPUT);
+  const passwordInput = getByTestId(PASSWORD_INPUT);
+  const loginButton = getByTestId(LOGIN_BUTTON);
 
-//   // AGIR
-//   userEvent.type(emailInput, VALID_EMAIL_TEST);
-//   userEvent.type(passwordInput, VALIDE_PASSWORD_TEST);
-//   userEvent.click(loginButton);
-
-//   // ACESSAR
-//   const drinksIcon = await findByTestId(DRINKS_BUTTON_BOTTON)
-
-//   // AGIR
-//   userEvent.click(drinksIcon)
-// };
+  // AGIR
+  userEvent.type(emailInput, VALID_EMAIL_TEST);
+  userEvent.type(passwordInput, VALIDE_PASSWORD_TEST);
+  userEvent.click(loginButton);
+};
 
 // screen.debug();
 
 describe('Teste da página Meals.js', () => {
-  describe('1 - Rota: Verifique se o componente "<Drinks />" é renderizado na rota "/drinks".', () => {
-    test('1.1 - Se o título da página "Drinks" está presente no compoente renderizado e se a rota é "/drinks".', async () => {
+  describe('1 - Rota: Verifique se o componente "<Meals />" é renderizado na rota "/meals".', () => {
+    test('1.1 - Se o usuário é redirecionado para a rota "/meals" ao efetuar o login na aplicação.', async () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { history, getByTestId } = renderWithRouterAndProvider(<Drinks />, { initialEntries: ['/drinks'] });
+      const { history, getByTestId, getByText } = renderWithRouterAndProvider(<App />);
 
       // ACESSAR
+      const emailInput = getByTestId(EMAIL_INPUT);
+      const passwordInput = getByTestId(PASSWORD_INPUT);
+      const loginButton = getByTestId(LOGIN_BUTTON);
+
+      // AGIR
+      userEvent.type(emailInput, VALID_EMAIL_TEST);
+      userEvent.type(passwordInput, VALIDE_PASSWORD_TEST);
+      userEvent.click(loginButton);
+
+      // ACESSAR
+      const { pathname } = history.location;
       const pageTitle = getByTestId('page-title');
-      const { location: { pathname } } = history;
+      const title = getByText('Meals');
 
       // AFERIR
-      expect(pageTitle.innerHTML).toBe('Drinks');
-      expect(pathname).toBe(DRINKS_ROUTE);
+      expect(pathname).toBe(MEALS_ROUTE);
+      expect(title).toBeInTheDocument();
+      expect(pageTitle).toBeInTheDocument();
     });
   });
 
-  describe('2 - Navegação: Verifique os elementos renderizados no componente "<Drinks />" que gerenciam a navegação para outras rotas.', () => {
+  describe('2 - Navegação: Verifique os elementos renderizados no componente "<Meals />" que gerenciam a navegação para outras rotas.', () => {
     test('2.1 - Perfil: o usuário é redirecionado para a rota "/profile" ao pressionar o botão de "Perfil" no topo da aplicação', () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { history, getByTestId } = renderWithRouterAndProvider(<Drinks />, { initialEntries: ['/drinks'] });
+      const { history, getByTestId } = renderWithRouterAndProvider(<App />);
+
+      // AGIR - LOGAR
+      handleLogin(getByTestId);
 
       // ACESSAR
       const profileIconButton = getByTestId('profile-top-btn');
@@ -212,7 +226,10 @@ describe('Teste da página Meals.js', () => {
 
     test('2.2 - Bebidas: o usuário é redirecionado para a rota "/drinks" ao pressionar o botão de "BEBIDAS" no rodapé da aplicação', () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { history, getByTestId } = renderWithRouterAndProvider(<Drinks />, { initialEntries: ['/drinks'] });
+      const { history, getByTestId } = renderWithRouterAndProvider(<App />);
+
+      // AGIR - LOGAR
+      handleLogin(getByTestId);
 
       // ACESSAR
       const drinksButton = getByTestId(DRINKS_BOTTON_BTN);
@@ -229,7 +246,10 @@ describe('Teste da página Meals.js', () => {
 
     test('2.3 - Comidas: o usuário é redirecionado para a rota "/meals" ao pressionar o botão de "COMIDAS" no rodapé da aplicação', () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { history, getByTestId } = renderWithRouterAndProvider(<Drinks />, { initialEntries: ['/drinks'] });
+      const { history, getByTestId } = renderWithRouterAndProvider(<App />);
+
+      // AGIR - LOGAR
+      handleLogin(getByTestId);
 
       // ACESSAR
       const mealsButton = getByTestId('meals-bottom-btn');
@@ -246,30 +266,64 @@ describe('Teste da página Meals.js', () => {
 
     test('2.4 - Receita: o usuário é redirecionado para a rota "/meals/52977" ao pressionar a imagem da receita "Corba" a partir da rota "/meals".', async () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { history, getByTestId, findByTestId } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      const { history, getByTestId, findByTestId } = renderWithRouterAndProvider(<App />);
+
+      // AGIR - LOGAR
+      handleLogin(getByTestId);
 
       // ACESSAR
       await waitFor(() => findByTestId(RECIPE_CARD_0));
-      const GGRecipe = getByTestId(RECIPE_CARD_0);
+      const corbaRecipe = getByTestId(RECIPE_CARD_0);
 
       // AGIR
-      userEvent.click(GGRecipe);
+      userEvent.click(corbaRecipe);
 
       // ACESSAR
       const { location: { pathname } } = history;
 
-      console.log(pathname);
+      // AFERIR
+      expect(pathname).toBe(CORBA_RECIPE);
+    });
 
-      screen.debug();
+    test('2.5 - Receita: o usuário é redirecionado para a rota "/drinks/15997" ao pressionar a imagem da receita "GG" a partir da rota "/drinks".', async () => {
+      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+      const {
+        history,
+        getByTestId,
+        findByTestId,
+      } = renderWithRouterAndProvider(<App />);
+
+      // AGIR - LOGAR
+      handleLogin(getByTestId);
+
+      //  ACESSAR
+      const drinksButton = getByTestId(DRINKS_BOTTON_BTN);
+
+      userEvent.click(drinksButton);
+
+      // ACESSAR
+      const ggDrinks = await findByTestId(RECIPE_CARD_0);
+
+      // AGIR
+      userEvent.click(ggDrinks);
+
+      // ACESSAR
+      const { location: { pathname } } = history;
+
       // AFERIR
       expect(pathname).toBe(GG_DRINK);
     });
   });
 
-  describe('3 - Renderização: Verifique se os elementos do componente "<Drinks />" estão presentes e/ou visiveis na tela.', () => {
-    test('3.1 - <Drinks /> - verifique se o botão de perfil está visível na tela.', () => {
+  describe('3 - Renderização: Verifique se os elementos do componente "<Meals />" estão presentes e/ou visiveis na tela.', () => {
+    test('3.1 - <Meals /> - verifique se o botão de perfil está visível na tela.', () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { getByTestId } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      const {
+        getByTestId,
+      } = renderWithRouterAndProvider(<App />);
+
+      // AGIR - LOGAR
+      handleLogin(getByTestId);
 
       //  ACESSAR
       const profileButton = getByTestId('profile-top-btn');
@@ -278,9 +332,14 @@ describe('Teste da página Meals.js', () => {
       expect(profileButton).toBeVisible();
     });
 
-    test('3.2 - <Drinks /> - verifique se o botão de busca está visível na tela.', () => {
+    test('3.2 - <Meals /> - verifique se o botão de busca está visível na tela.', () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { getByTestId } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      const {
+        getByTestId,
+      } = renderWithRouterAndProvider(<App />);
+
+      // AGIR - LOGAR
+      handleLogin(getByTestId);
 
       //  ACESSAR
       const searchButton = getByTestId(SEARCH_TOP_BTN);
@@ -289,9 +348,14 @@ describe('Teste da página Meals.js', () => {
       expect(searchButton).toBeVisible();
     });
 
-    test('3.3 - <Drinks /> - verifique se o título da página está visível na tela.', () => {
+    test('3.3 - <Meals /> - verifique se o título da página está visível na tela.', () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { getByTestId } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      const {
+        getByTestId,
+      } = renderWithRouterAndProvider(<App />);
+
+      // AGIR - LOGAR
+      handleLogin(getByTestId);
 
       //  ACESSAR
       const pageTitle = getByTestId('page-title');
@@ -300,33 +364,47 @@ describe('Teste da página Meals.js', () => {
       expect(pageTitle).toBeVisible();
     });
 
-    test('3.4 - <Drinks /> - verifique se os botões de filtro, "Ordinary Drink", "Cocktail", "Shake", "Other / Unknown", "Cocoa" e "All" estão visiveis na tela.', async () => {
+    test('3.4 - <Meals /> - verifique se os botões de filtro, "Beef", "Breakfast", Chicken, "Dessert" e "goat" estão visiveis na tela.', async () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { getByTestId, findByTestId } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      const {
+        getByTestId,
+        findByTestId,
+      } = renderWithRouterAndProvider(<App />);
+
+      // AGIR - LOGAR
+      handleLogin(getByTestId);
 
       // AGIR
-      await waitFor(() => findByTestId(ORDINARY_DRINK_CATEGORY_FILTER));
+      await waitFor(() => findByTestId(BEEF_CATEGORY_FILTER));
+      // await waitFor(() => findByTestId('Ordinary Drink-category-filter'));
 
       // ACESSAR
-      const beefCategoryFilterRadio = await findByTestId(ORDINARY_DRINK_CATEGORY_FILTER);
-      const cocktailCategoryFilterRadio = getByTestId('Cocktail-category-filter');
-      const shakeCategoryFilterRadio = getByTestId('Shake-category-filter');
-      const otherAndUnknownCategoryFilterRadio = getByTestId('Other/Unknown-category-filter');
-      const cocoaCategoryFilterRadio = getByTestId(COCOA_CATEGORY_FILTER);
+      const beefCategoryFilterRadio = await findByTestId(BEEF_CATEGORY_FILTER);
+      const breakfastCategoryFilterRadio = getByTestId('Breakfast-category-filter');
+      const chickenCategoryFilterRadio = getByTestId('Chicken-category-filter');
+      const dessertCategoryFilterRadio = getByTestId('Dessert-category-filter');
+      const goatCategoryFilterRadio = getByTestId(GOAT_CATEGORY_FILTER);
       const resetFilterAllCategoryButton = getByTestId('All-category-filter');
 
       // AFERIR
       expect(beefCategoryFilterRadio).toBeVisible();
-      expect(cocktailCategoryFilterRadio).toBeVisible();
-      expect(shakeCategoryFilterRadio).toBeVisible();
-      expect(otherAndUnknownCategoryFilterRadio).toBeVisible();
-      expect(cocoaCategoryFilterRadio).toBeVisible();
+      expect(breakfastCategoryFilterRadio).toBeVisible();
+      expect(chickenCategoryFilterRadio).toBeVisible();
+      expect(dessertCategoryFilterRadio).toBeVisible();
+      expect(goatCategoryFilterRadio).toBeVisible();
       expect(resetFilterAllCategoryButton).toBeVisible();
     });
 
-    test('3.5 - <Drinks /> - verifique se as 12 primeiras receitas, contendo imagem e nome, estão visiveis na tela', async () => {
+    test('3.5 - <Meals /> - verifique se as 12 primeiras receitas, contendo imagem e nome, estão visiveis na tela', async () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { findAllByTestId, getAllByTestId } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      const {
+        getByTestId,
+        getAllByTestId,
+        findAllByTestId,
+      } = renderWithRouterAndProvider(<App />);
+
+      // AGIR - LOGAR
+      handleLogin(getByTestId);
 
       // AGIR
       // await waitFor(() => findByTestId('11-recipe-card'));
@@ -345,9 +423,14 @@ describe('Teste da página Meals.js', () => {
       twelveRecipesNAme.map((img) => expect(img).toBeVisible());
     });
 
-    test('3.6 - <Drinks /> - verifique se o botão de filtro de bebidas está visível na tela.', () => {
+    test('3.6 - <Meals /> - verifique se o botão de filtro de bebidas está visível na tela.', () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { getByTestId } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      const {
+        getByTestId,
+      } = renderWithRouterAndProvider(<App />);
+
+      // AGIR - LOGAR
+      handleLogin(getByTestId);
 
       //  ACESSAR
       const drinksBottomButton = getByTestId(DRINKS_BOTTON_BTN);
@@ -356,9 +439,14 @@ describe('Teste da página Meals.js', () => {
       expect(drinksBottomButton).toBeVisible();
     });
 
-    test('3.7 - <Drinks /> - verifique se o botão de filtro de comidas está visível na tela.', () => {
+    test('3.7 - <Meals /> - verifique se o botão de filtro de comidas está visível na tela.', () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { getByTestId } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      const {
+        getByTestId,
+      } = renderWithRouterAndProvider(<App />);
+
+      // AGIR - LOGAR
+      handleLogin(getByTestId);
 
       //  ACESSAR
       const mealsBottomButton = getByTestId('meals-bottom-btn');
@@ -367,9 +455,15 @@ describe('Teste da página Meals.js', () => {
       expect(mealsBottomButton).toBeVisible();
     });
 
-    test('3.8 - <Drinks /> - verifique se o formulário de busca não está presente na tela ao efetuar o login.', () => {
+    test('3.8 - <Meals /> - verifique se o formulário de busca não está presente na tela ao efetuar o login.', () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { queryByTestId } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      const {
+        getByTestId,
+        queryByTestId,
+      } = renderWithRouterAndProvider(<App />);
+
+      // AGIR - LOGAR
+      handleLogin(getByTestId);
 
       // ACESSAR
       const searchInput = queryByTestId(SEARCH_INPUT);
@@ -386,9 +480,15 @@ describe('Teste da página Meals.js', () => {
       expect(SearchExecButton).toBeNull();
     });
 
-    test('3.9 - <Drinks /> - verifique se o formulário de busca está presente na tela após pressionar o botão de "Busca".', async () => {
+    test('3.9 - <Meals /> - verifique se o formulário de busca está presente na tela após pressionar o botão de "Busca".', async () => {
       // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-      const { getByTestId, findByTestId } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      const {
+        getByTestId,
+        findByTestId,
+      } = renderWithRouterAndProvider(<App />);
+
+      // AGIR - LOGAR
+      handleLogin(getByTestId);
 
       // ACESSAR
       const searchButton = getByTestId(SEARCH_TOP_BTN);
@@ -413,11 +513,17 @@ describe('Teste da página Meals.js', () => {
     });
   });
 
-  describe('4 - Teste as funcionalidades do componente <Drinks />', () => {
+  describe('4 - Teste as funcionalidades do componente <Meals />', () => {
     describe('4.1 - Teste a funcionalidade de "Buscar".', () => {
-      test('4.1.1 - Buscar: verifique se ao realizar uma busca por ingrediente com o input vazio, a primeira receita é "151 Florida Bushwacker"', async () => {
-      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const { getByTestId, findByAltText } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      test('4.1.1 - Buscar: verifique se ao realizar uma busca por ingrediente com o input vazio, a primeira receita é "Corba"', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
 
         // ACESSAR - captura o botão de busca no topo
         const searchTopButton = getByTestId(SEARCH_TOP_BTN);
@@ -438,17 +544,23 @@ describe('Teste da página Meals.js', () => {
         userEvent.click(execSearchButton);
 
         // ACESSAR
-        const firstDrinkRecipe = await findByAltText(FLORIDA_BUSHWACKER);
+        const corbaRecipe = await findByAltText('Corba');
 
         // AFERIR
-        expect(firstDrinkRecipe).toBeInTheDocument();
+        expect(corbaRecipe).toBeInTheDocument();
 
         // screen.debug();
       });
 
-      test('4.1.2 - Buscar: verifique se ao realizar uma busca por nome com o input vazio, a primeira receita é "GG"', async () => {
-      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const { getByTestId, findByAltText } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      test('4.1.2 - Buscar: verifique se ao realizar uma busca por nome com o input vazio, a primeira receita é "Corba"', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
 
         // ACESSAR - captura o botão de busca no topo
         const searchTopButton = getByTestId(SEARCH_TOP_BTN);
@@ -469,18 +581,22 @@ describe('Teste da página Meals.js', () => {
         userEvent.click(execSearchButton);
 
         // ACESSAR
-        const firstDrinkRecipe = await findByAltText('GG');
+        const corbaRecipe = await findByAltText('Corba');
 
         // AFERIR
-        expect(firstDrinkRecipe).toBeInTheDocument();
+        expect(corbaRecipe).toBeInTheDocument();
+
+        // screen.debug();
       });
 
       test('4.1.3 - Buscar: verifique se ao realizar uma busca pela primeira letra com o input vazio, o alerta "Your search must have only 1 (one) character" é exibido na tela.', async () => {
         // MOCK
         jest.spyOn(global, 'alert').mockReturnValue('Your search must have only 1 (one) character');
-
         // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const { getByTestId } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+        const { getByTestId } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
 
         // ACESSAR - captura o botão de busca no topo
         const searchTopButton = getByTestId(SEARCH_TOP_BTN);
@@ -500,13 +616,25 @@ describe('Teste da página Meals.js', () => {
         // AGIR - clica no botao de ativação do filtro.
         userEvent.click(execSearchButton);
 
+        // ACESSAR
+        // const ondeCharacterText = await findByText('Your search must have only 1 (one) character');
+
         // AFERIR
         expect(global.alert).toHaveBeenCalled();
+        // expect(ondeCharacterText).toBeVisible();
+
+        // screen.debug();
       });
 
-      test('4.1.4 - Buscar: verifique se ao realizar uma busca de ingrediente pelo termo "Light rum", a primeira receita é "151 Florida Bushwacker"', async () => {
-      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const { getByTestId, findByAltText } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      test('4.1.4 - Buscar: verifique se ao realizar uma busca de ingrediente pelo termo "chicken", a primeira receita é "Brown Stew Chicken"', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
 
         // ACESSAR - captura o botão de busca no topo
         const searchTopButton = getByTestId(SEARCH_TOP_BTN);
@@ -518,7 +646,7 @@ describe('Teste da página Meals.js', () => {
         const searchInput = getByTestId(SEARCH_INPUT);
 
         // AGIR - insere o termo de busca "chicken" no input
-        userEvent.type(searchInput, 'Light rum');
+        userEvent.type(searchInput, 'chicken');
 
         // ACESSAR  - captura o botão que ativa o filtro de busca
         const execSearchButton = getByTestId(EXEC_SEARCH_BTN);
@@ -527,15 +655,21 @@ describe('Teste da página Meals.js', () => {
         userEvent.click(execSearchButton);
 
         // ACESSAR
-        const firstDrinkRecipe = await findByAltText(FLORIDA_BUSHWACKER);
+        const brownStewChickenRecipe = await findByAltText(BROWN_STEW_CHICKEN);
 
         // AFERIR
-        expect(firstDrinkRecipe).toBeInTheDocument();
+        expect(brownStewChickenRecipe).toBeInTheDocument();
       });
 
-      test('4.1.5 - Buscar: verifique se ao realizar uma busca pelo nome, utilizando o termo "Aquamarine", a primeira receita é "Aquamarine"', async () => {
-      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const { getByTestId, findByAltText } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      test('4.1.5 - Buscar: verifique se ao realizar uma busca pelo nome, utilizando o termo "arrabiata", a primeira receita é "Spicy Arrabiata Penne"', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
 
         // ACESSAR - captura o botão de busca no topo
         const searchTopButton = getByTestId(SEARCH_TOP_BTN);
@@ -547,7 +681,7 @@ describe('Teste da página Meals.js', () => {
         const searchInput = getByTestId(SEARCH_INPUT);
 
         // AGIR - insere o termo de busca "chicken" no input
-        userEvent.type(searchInput, 'Aquamarine');
+        userEvent.type(searchInput, 'Arrabiata');
 
         // ACESSAR - filtro de nome
         const nameFilterRadio = getByTestId(NAME_SEARCH_RADIO);
@@ -562,15 +696,21 @@ describe('Teste da página Meals.js', () => {
         userEvent.click(execSearchButton);
 
         // ACESSAR
-        const oneDrinkRecipe = await findByAltText('Aquamarine');
+        const spicyArrabiataPenneRecipe = await findByAltText('Spicy Arrabiata Penne');
 
         // AFERIR
-        expect(oneDrinkRecipe).toBeInTheDocument();
+        expect(spicyArrabiataPenneRecipe).toBeInTheDocument();
       });
 
-      test('4.1.6 - Buscar: verifique se ao realizar uma busca pela primeira letra, utilizando o termo "a", a primeira receita é "Aquamarine"', async () => {
-      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const { getByTestId, findByAltText } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      test('4.1.6 - Buscar: verifique se ao realizar uma busca pela primeira letra, utilizando o termo "a", a primeira receita é "Spicy Arrabiata Penne"', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
 
         // ACESSAR - captura o botão de busca no topo
         const searchTopButton = getByTestId(SEARCH_TOP_BTN);
@@ -597,20 +737,24 @@ describe('Teste da página Meals.js', () => {
         userEvent.click(execSearchButton);
 
         // ACESSAR
-        const oneDrinkRecipe = await findByAltText('Aquamarine');
+        const spicyArrabiataPenneRecipe = await findByAltText('Spicy Arrabiata Penne');
 
         // AFERIR
-        expect(oneDrinkRecipe).toBeInTheDocument();
+        expect(spicyArrabiataPenneRecipe).toBeInTheDocument();
       });
-
-      test('4.1.7 - Buscar: verifique se ao realizar uma busca pelo nome "xablau", um alerta com a mensagem "Sorry, we haven\'t found any recipes for these filters." é exibido na tela', async () => {
+      test('4.1.7 - Buscar: verifique se ao realizar uma busca pelo nome, um alerta com o texto "Sorry, we haven\'t found any recipes for these filters." é renderizado na tela', async () => {
         // MOCK
         const messageAlert = 'Sorry, we haven\'t found any recipes for these filters.';
         // MOCK
         jest.spyOn(global, 'alert').mockReturnValue(messageAlert);
 
         // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const { getByTestId } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+        const {
+          getByTestId,
+        } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
 
         // ACESSAR - captura o botão de busca no topo
         const searchTopButton = getByTestId(SEARCH_TOP_BTN);
@@ -621,14 +765,14 @@ describe('Teste da página Meals.js', () => {
         // ACESSAR - captura o elemento de input
         const searchInput = getByTestId(SEARCH_INPUT);
 
-        // AGIR - insere o termo de busca "xablau" no input
+        // AGIR - insere o termo de busca "chicken" no input
         userEvent.type(searchInput, 'xablau');
 
         // ACESSAR - filtro de busca por nome
-        const nameFilterButton = getByTestId(NAME_SEARCH_RADIO);
+        const nameSearchButton = getByTestId(NAME_SEARCH_RADIO);
 
         // AGIR - clickar no filtro de nome
-        userEvent.click(nameFilterButton);
+        userEvent.click(nameSearchButton);
 
         // ACESSAR  - captura o botão que ativa o filtro de busca
         const execSearchButton = getByTestId(EXEC_SEARCH_BTN);
@@ -645,145 +789,187 @@ describe('Teste da página Meals.js', () => {
     });
 
     describe('4.2 - Teste a funcionalidade de filtar', () => {
-      test('4.2.1 - Filtrar: verifique se ao selecionar o filtro "Ordinary Drink", a receita "151 Florida Bushwacker" está presente na tela, e, se ao selecionar novamente o filtro "Ordinary Drink", o filtro é resetado e a receita "GG" está presente na tela.', async () => {
-      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const { findByTestId, findByAltText } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      test('4.2.1 - Filtrar: verifique se ao selecionar o filtro "Beef", a receita "Brown Stew Chicken" está presente na tela, e, ao clicar novamente no filtro "Beef", o filtro é resetado e a receita "Corba" está presente na tela.', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
 
-        // ACESSAR - capturar filtro Ordinary Drink
-        const ordinaryDrinkFilter = await findByTestId(ORDINARY_DRINK_CATEGORY_FILTER);
-
-        // AGIR - pressionar de filtro capturado
-        userEvent.click(ordinaryDrinkFilter);
-
-        // ACESSAR
-        const firstDrinkRecipe = await findByAltText(FLORIDA_BUSHWACKER);
-
-        // AFERIR
-        expect(firstDrinkRecipe).toBeVisible();
-
-        // AGIR
-        userEvent.click(ordinaryDrinkFilter);
-
-        // ACESAR
-        const resetFilterOrdinaryDrink = await findByAltText('GG');
-
-        // AFERIR
-        expect(resetFilterOrdinaryDrink).toBeVisible();
-      });
-
-      test('4.2.2 - Filtrar: verifique se ao selecionar o filtro "Cocktail", a receita "151 Florida Bushwacker" está presente na tela', async () => {
-      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const { findByTestId, findByAltText } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
-
-        // ACESSAR - capturar filtro Cocktail
-        const cocktailCategoryFilter = await findByTestId('Cocktail-category-filter');
-
-        // AGIR - pressionar de filtro capturado
-        userEvent.click(cocktailCategoryFilter);
-
-        // ACESSAR
-        const firstDrinkByIngredientRecipe = await findByAltText(FLORIDA_BUSHWACKER);
-
-        // AFERIR
-        expect(firstDrinkByIngredientRecipe).toBeVisible();
-
-        // AGIR
-        userEvent.click(cocktailCategoryFilter);
-
-        // ACESAR
-        const resetFilterOrdinaryDrink = await findByAltText('GG');
-
-        // AFERIR
-        expect(resetFilterOrdinaryDrink).toBeVisible();
-      });
-
-      test('4.2.3 - Filtrar: verifique se ao selecionar o filtro "Shake", a receita "151 Florida Bushwacker" está presente na tela.', async () => {
-      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const { findByTestId, findByAltText } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
 
         // ACESSAR - capturar filtro Beff
-        const shakeCategoryFilter = await findByTestId('Shake-category-filter');
+        const beffFilter = await findByTestId(BEEF_CATEGORY_FILTER);
 
         // AGIR - pressionar de filtro capturado
-        userEvent.click(shakeCategoryFilter);
+        userEvent.click(beffFilter);
 
         // ACESSAR
-        const firstDrinkByIngredientRecipe = await findByAltText(FLORIDA_BUSHWACKER);
+        const brownStewChicken = await findByAltText(BROWN_STEW_CHICKEN);
 
         // AFERIR
-        expect(firstDrinkByIngredientRecipe).toBeVisible();
+        expect(brownStewChicken).toBeVisible();
 
         // AGIR
-        userEvent.click(shakeCategoryFilter);
+        userEvent.click(beffFilter);
 
         // ACESAR
-        const resetFilterOrdinaryDrink = await findByAltText('GG');
+        const resetFilterOrdinaryDrink = await findByAltText('Corba');
 
         // AFERIR
         expect(resetFilterOrdinaryDrink).toBeVisible();
       });
 
-      test('4.2.4 - Filtrar: verifique se ao selecionar o filtro "Other/Unknown",a receita "151 Florida Bushwacker" está presente na tela.', async () => {
-      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const { findByTestId, findByAltText } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      test('4.2.2 - Filtrar: verifique se ao selecionar o filtro "Breakfast", a receita "Brown Stew Chicken" está presente na tela, e, ao clicar novamente no filtro "Breakfast", o filtro é resetado e a receita "Corba" está presente na tela.', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
 
         // ACESSAR - capturar filtro Beff
-        const otherAndUnknownFilter = await findByTestId('Other/Unknown-category-filter');
+        const breakfastFilter = await findByTestId('Breakfast-category-filter');
 
         // AGIR - pressionar de filtro capturado
-        userEvent.click(otherAndUnknownFilter);
+        userEvent.click(breakfastFilter);
 
         // ACESSAR
-        const firstDrinkByIngredientRecipe = await findByAltText(FLORIDA_BUSHWACKER);
+        const brownStewChicken = await findByAltText(BROWN_STEW_CHICKEN);
 
         // AFERIR
-        expect(firstDrinkByIngredientRecipe).toBeVisible();
+        expect(brownStewChicken).toBeVisible();
 
         // AGIR
-        userEvent.click(otherAndUnknownFilter);
+        userEvent.click(breakfastFilter);
 
         // ACESAR
-        const resetFilterOrdinaryDrink = await findByAltText('GG');
+        const resetFilterOrdinaryDrink = await findByAltText('Corba');
 
         // AFERIR
         expect(resetFilterOrdinaryDrink).toBeVisible();
       });
 
-      test('4.2.5 - Filtrar: verifique se ao selecionar o filtro "Cocoa", a receita "151 Florida Bushwacker" está presente na tela.', async () => {
-      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const { findByTestId, findByAltText } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      test('4.2.3 - Filtrar: verifique se ao selecionar o filtro "Chicken", a receita "Brown Stew Chicken" está presente na tela, e, ao clicar novamente no filtro "Chicken", o filtro é resetado e a receita "Corba" está presente na tela.', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
 
         // ACESSAR - capturar filtro Beff
-        const cocoaFilter = await findByTestId(COCOA_CATEGORY_FILTER);
+        const chickenFilter = await findByTestId('Chicken-category-filter');
 
         // AGIR - pressionar de filtro capturado
-        userEvent.click(cocoaFilter);
+        userEvent.click(chickenFilter);
 
         // ACESSAR
-        const firstDrinkByIngredientRecipe = await findByAltText(FLORIDA_BUSHWACKER);
+        const brownStewChicken = await findByAltText(BROWN_STEW_CHICKEN);
 
         // AFERIR
-        expect(firstDrinkByIngredientRecipe).toBeVisible();
+        expect(brownStewChicken).toBeVisible();
 
         // AGIR
-        userEvent.click(cocoaFilter);
+        userEvent.click(chickenFilter);
 
         // ACESAR
-        const resetFilterOrdinaryDrink = await findByAltText('GG');
+        const resetFilterOrdinaryDrink = await findByAltText('Corba');
 
         // AFERIR
         expect(resetFilterOrdinaryDrink).toBeVisible();
       });
 
-      test('4.2.6 - Filtrar: verifique se ao selecionar o filtro "Cocoa" e pressionar o botão "All" para limpar os filtros, a receita "151 Florida Bushwacker" está presente na tela', async () => {
-      // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
-        const { getByTestId, findByTestId, findByAltText } = renderWithRouterAndProvider(<App />, { initialEntries: ['/drinks'] });
+      test('4.2.4 - Filtrar: verifique se ao selecionar o filtro "Dessert",a receita "Brown Stew Chicken" está presente na tela, e, ao clicar novamente no filtro "Dessert", o filtro é resetado e a receita "Corba" está presente na tela.', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
 
         // ACESSAR - capturar filtro Beff
-        const cocoaFilter = await findByTestId(COCOA_CATEGORY_FILTER);
+        const dessertFilter = await findByTestId('Dessert-category-filter');
 
         // AGIR - pressionar de filtro capturado
-        userEvent.click(cocoaFilter);
+        userEvent.click(dessertFilter);
+
+        // ACESSAR
+        const brownStewChicken = await findByAltText(BROWN_STEW_CHICKEN);
+
+        // AFERIR
+        expect(brownStewChicken).toBeVisible();
+
+        // AGIR
+        userEvent.click(dessertFilter);
+
+        // ACESAR
+        const resetFilterOrdinaryDrink = await findByAltText('Corba');
+
+        // AFERIR
+        expect(resetFilterOrdinaryDrink).toBeVisible();
+      });
+
+      test('4.2.5 - Filtrar: verifique se ao selecionar o filtro "Goat", a receita "Brown Stew Chicken" está presente na tela, e, ao clicar novamente no filtro "Goat", o filtro é resetado e a receita "Corba" está presente na tela.', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
+
+        // ACESSAR - capturar filtro Beff
+        const goatFilter = await findByTestId(GOAT_CATEGORY_FILTER);
+
+        // AGIR - pressionar de filtro capturado
+        userEvent.click(goatFilter);
+
+        // ACESSAR
+        const brownStewChicken = await findByAltText(BROWN_STEW_CHICKEN);
+
+        // AFERIR
+        expect(brownStewChicken).toBeVisible();
+
+        // AGIR
+        userEvent.click(goatFilter);
+
+        // ACESAR
+        const resetFilterOrdinaryDrink = await findByAltText('Corba');
+
+        // AFERIR
+        expect(resetFilterOrdinaryDrink).toBeVisible();
+      });
+
+      test('4.2.6 - Filtrar: verifique se ao selecionar o filtro "Goat" e pressionar o botão "All" para limpar os filtros, a receita "Corba" está presente na tela', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByTestId,
+          findByAltText,
+        } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
+
+        // ACESSAR - capturar filtro Beff
+        const goatFilter = await findByTestId(GOAT_CATEGORY_FILTER);
+
+        // AGIR - pressionar de filtro capturado
+        userEvent.click(goatFilter);
 
         // ACESSAR
         const allCategoryFilterButton = getByTestId('All-category-filter');
@@ -792,10 +978,52 @@ describe('Teste da página Meals.js', () => {
         userEvent.click(allCategoryFilterButton);
 
         // ACESSAR
-        const firstDrinkRecipeDefault = await findByAltText(FLORIDA_BUSHWACKER);
+        const corbaRecipe = await findByAltText('Corba');
 
         // AFERIR
-        expect(firstDrinkRecipeDefault).toBeVisible();
+        expect(corbaRecipe).toBeVisible();
+      });
+      test('4.2.7 - Filtrar: verifique se ao filtrar pela busca de ingrediente utilizando o termo "chicken", pressionar o botão de filtro por categoria "Beef", resetar o filtro pressionando novamente o filtro de categoria "Beef", a receita "Brown Stew Chicken" é renderizada novamente na tela.', async () => {
+        // DAAAM - DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+        const {
+          getByTestId,
+          findByAltText,
+          findByTestId,
+        } = renderWithRouterAndProvider(<App />);
+
+        // AGIR - LOGAR
+        handleLogin(getByTestId);
+
+        // ACESSAR - captura o botão de busca no topo
+        const searchTopButton = getByTestId(SEARCH_TOP_BTN);
+
+        // AGIR - clica no botão captura
+        userEvent.click(searchTopButton);
+
+        // ACESSAR - captura o elemento de input
+        const searchInput = getByTestId(SEARCH_INPUT);
+
+        // AGIR - insere o termo de busca "chicken" no input
+        userEvent.type(searchInput, 'chicken');
+
+        // ACESSAR  - captura o botão que ativa o filtro de busca
+        const execSearchButton = getByTestId(EXEC_SEARCH_BTN);
+
+        // AGIR - clica no botao de ativação do filtro.
+        userEvent.click(execSearchButton);
+
+        // ACESSAR - captura o botão de filtro por categoria "Beef"
+        const beefButtonCategoryFilter = await findByTestId('Beef-category-filter');
+
+        // AGIR
+        userEvent.click(beefButtonCategoryFilter);
+        userEvent.click(beefButtonCategoryFilter);
+
+        // ACESSAR
+        const brownStewChickenRecipe = await findByAltText(BROWN_STEW_CHICKEN);
+
+        // AFERIR
+        expect(brownStewChickenRecipe).toBeInTheDocument();
       });
     });
   });

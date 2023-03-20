@@ -21,11 +21,11 @@ describe('Teste da página Login.js', () => {
       const { history } = renderWithRouterAndProvider(<Login />);
 
       // DEFINIR
-      const roteDefault = '/';
+      const routeDefault = '/';
       const { pathname } = history.location;
 
       // AFERIR
-      expect(pathname).toBe(roteDefault);
+      expect(pathname).toBe(routeDefault);
     });
   });
 
@@ -138,3 +138,5 @@ describe('Teste da página Login.js', () => {
     });
   });
 });
+
+// LOCAL STORAGE: falta testar a funcionalidade de salvar a informação do e-mail no local storage com a chave e o valor correto.

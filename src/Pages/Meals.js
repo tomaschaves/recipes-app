@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
@@ -7,7 +7,7 @@ import RecipeContext from '../context/RecipeContext';
 export default function Meals() {
   const {
     meals,
-    setMeals,
+    // setMeals,
     mealsCategoriesList,
   } = useContext(RecipeContext);
 
@@ -16,11 +16,11 @@ export default function Meals() {
   const emptyFilter = {}; // para renderizar o padrão da função filterClick
   const [categoryClicked, setCategoryClicked] = useState(emptyFilter); // para usar na lógica do filterClick
 
-  useEffect(() => {
-    if (!meals) {
-      setMeals(meals);
-    }
-  }, [meals, setMeals]);
+  // useEffect(() => {
+  //   if (!meals) {
+  //     setMeals(meals);
+  //   }
+  // }, [meals, setMeals]);
 
   const filterCategory = async (theme) => {
     // para filtrar as bebidas pela categoria escolhida pelos radio button

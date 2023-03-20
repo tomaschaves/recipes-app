@@ -1,38 +1,61 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Buttons from '../components/Buttons';
 import EndButton from '../components/EndButton';
 import returnObjectToSave from '../helpers/returnObjectToSave';
 
 export default function RecipeInProgress() {
-  const history = useHistory();
-  const location = useLocation();
+  // const history = useHistory();
+  const { pathname } = useLocation();
   const [shownRecipe, setShowRecipe] = useState([]);
   const [optionsSelected, setOptionsSelected] = useState([]);
   const [recipeInProgress, setRecipeInProgress] = useState({}); // estado para ser colocado o objeto atual, que será salvo ou retirado do LS
 
   const id = () => {
-    const { location: { pathname } } = history;
     const idForSearch = pathname.replace(/\D/g, '');
     return `${idForSearch}`;
   };
 
   // fetch realizado nesse componente para passar nos testes. é possível entrar nessa página passando a receita como props
+  // const rightFetch = useCallback(() => {
+  //   if (/meals/.test(pathname)) {
+  //     fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${(pathname.replace(/\D/g, ''))}`)
+  //       .then((response) => response.json())
+  //       .then((data) => setShowRecipe([data.meals[0]]));
+  //   } else if (/drink/.test(pathname)) {
+  //     fetch(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${(pathname.replace(/\D/g, ''))}`)
+  //       .then((response) => response.json())
+  //       .then((data) => setShowRecipe([data.drinks[0]]));
+  //   }
+  // }, [pathname]);
+
+  // REQUISIÇÃO - na API com endpoint especifico da receita a detalhar
   const rightFetch = useCallback(() => {
-    if (/meals/.test(location.pathname)) {
-      fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${(location.pathname.replace(/\D/g, ''))}`)
+    // VALIDAÇÃO - da condição que define qual endpoint utilizar
+    const mealsRecipe = /meals/.test(pathname);
+    // ACESSA - o id da receita
+    const meal = pathname.replace(/\D/g, '');
+    const drink = pathname.replace(/\D/g, '');
+    // DEFINE - o endpoint com o id da receita
+    const endPointMeals = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${meal}`;
+    const endPointDrinks = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${drink}`;
+
+    // AFERE - a condição para definir qual endpoint utilizar na requisição à API
+    if (mealsRecipe) {
+      fetch(endPointMeals)
         .then((response) => response.json())
         .then((data) => setShowRecipe([data.meals[0]]));
-    } else if (/drink/.test(location.pathname)) {
-      fetch(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${(location.pathname.replace(/\D/g, ''))}`)
-        .then((response) => response.json())
-        .then((data) => setShowRecipe([data.drinks[0]]));
+      return;
     }
-  }, [location.pathname]);
+
+    fetch(endPointDrinks)
+      .then((response) => response.json())
+      .then((data) => setShowRecipe([data.drinks[0]]));
+  }, []);
 
   const objToSave = () => { // quando o estado for algo com tamanho maior que 0, chamamos a função que criará o objeto a ser setado no estado de receita em andamento
     if (shownRecipe.length > 0) {
-      const type = location.pathname.replace(/\//g, '').replace(/[0-9]/g, '').replace('in-progress', '');
+      const type = pathname.replace(/\//g, '').replace(/[0-9]/g, '').replace('in-progress', '');
       setRecipeInProgress(returnObjectToSave(type, shownRecipe[0]));
     }
   };
@@ -48,10 +71,10 @@ export default function RecipeInProgress() {
     && shownRecipe[0][`strIngredient${index}`] !== null) {
       ingredients.push(`${shownRecipe[0][`strIngredient${index}`]} 
       - ${shownRecipe[0][`strMeasure${index}`]}`);
-      const limit = 19;
-      if (index > limit) {
-        break;
-      }
+      // const limit = 19;
+      // if (index > limit) {
+      //   break;
+      // }
       index += 1;
     }
     return ingredients;
@@ -67,7 +90,7 @@ export default function RecipeInProgress() {
     let searchMealID = JSONOptions.meals[id()];
     let searchDrinkID = JSONOptions.drinks[id()];
 
-    if (/meals/.test(location.pathname)) { // se o link for de 'meals'
+    if (/meals/.test(pathname)) { // se o link for de 'meals'
       if (!searchMealID) { // o id para ser pesquisado for undefined(ou seja, não constar dentro do LS(em JSONOptions))
         const objectToSetInLS = { // criaremos o objeto para setar no LS
           ...JSONOptions,
@@ -87,7 +110,7 @@ export default function RecipeInProgress() {
       };
       localStorage.setItem('inProgressRecipes', JSON.stringify(objectToSetInLS));
       setOptionsSelected(searchMealID);
-    } else if (/drinks/.test(location.pathname)) { // mesma coisa acima, mas para as bebidas
+    } else if (/drinks/.test(pathname)) { // mesma coisa acima, mas para as bebidas
       if (!searchDrinkID) {
         const objectToSetInLS = {
           ...JSONOptions,
@@ -122,10 +145,10 @@ export default function RecipeInProgress() {
     }
     let searchMealID = JSONObject.meals[id()]; // pegaremos o array de opções do id de comidas e bebidas atual
     let searchDrinkID = JSONObject.drinks[id()];
-    if (/meals/.test(location.pathname)) {
+    if (/meals/.test(pathname)) {
       searchMealID = JSONObject.meals[id()];
       setOptionsSelected(searchMealID); // e setaremos ele no estado de opções
-    } else if (/drinks/.test(location.pathname)) {
+    } else if (/drinks/.test(pathname)) {
       searchDrinkID = JSONObject.drinks[id()];
       setOptionsSelected(searchDrinkID);
     }
@@ -143,7 +166,7 @@ export default function RecipeInProgress() {
   return (
     <div>
       {
-        shownRecipe.length > 0 && (/meals/.test(location.pathname) ? (
+        shownRecipe.length > 0 && (/meals/.test(pathname) ? (
           <div>
             <img
               src={ shownRecipe[0].strMealThumb }

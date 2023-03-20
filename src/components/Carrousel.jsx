@@ -17,7 +17,6 @@ export default function Caroussel({ options }) {
     if (options === 'meals') return meals.slice(0, maximumNumerOfRecipes);
     return drinks.slice(0, maximumNumerOfRecipes);
   };
-
   return (
     location.pathname.includes('/drinks')
       ? (

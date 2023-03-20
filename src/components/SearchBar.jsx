@@ -7,13 +7,14 @@ export default function SearchBar() {
   const inputRef = React.useRef();
   const { setMeals, setDrinks } = React.useContext(RecipeContex);
   const history = useHistory();
+  // const {path}
 
   const handleSearchTypeChange = (event) => {
     setSearchType(event.target.value);
   };
 
   const fetchData = (endpoint) => {
-    if (window.location.pathname === '/meals') {
+    if (history.location.pathname === '/meals') {
       fetch(endpoint)
         .then((response) => response.json())
         .then((data) => {
@@ -25,7 +26,7 @@ export default function SearchBar() {
             setMeals(data.meals);
           }
         });
-    } else if (window.location.pathname === '/drinks') {
+    } else if (history.location.pathname === '/drinks') {
       fetch(endpoint)
         .then((response) => response.json())
         .then((data) => {
@@ -44,7 +45,7 @@ export default function SearchBar() {
     const searchInput = inputRef.current.value;
     let endpoint = '';
 
-    const baseEndpoint = window.location.pathname === '/meals'
+    const baseEndpoint = history.location.pathname === '/meals'
       ? 'https://www.themealdb.com/api/json/v1/1'
       : 'https://www.thecocktaildb.com/api/json/v1/1';
 
