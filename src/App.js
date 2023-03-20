@@ -11,16 +11,17 @@ import Profile from './Pages/Profile';
 import DoneRecipes from './Pages/DoneRecipes';
 import FavoriteRecipes from './Pages/FavoriteRecipes';
 import RecipeDetails from './Pages/RecipeDetails';
+import Recipes from './Pages/Recipes';
 
 function App() {
   return (
     <RecipeProvider>
       <Switch>
         <Route exact path="/" component={ Login } />
-        <Route exact path="/meals" component={ Meals } />
+        <Route exact path="/meals" component={ Recipes } />
         <Route exact path="/meals/:id" component={ RecipeDetails } />
         <Route exact path="/meals/:id/in-progress" component={ RecipeInProgress } />
-        <Route exact path="/drinks" component={ Drinks } />
+        <Route exact path="/drinks" component={ Recipes } />
         <Route exact path="/drinks/:id" component={ RecipeDetails } />
         <Route exact path="/drinks/:id/in-progress" component={ RecipeInProgress } />
         <Route exact path="/profile" component={ Profile } />
