@@ -1,3 +1,5 @@
+/* eslint-disable sonarjs/no-duplicate-string */
+
 const drinks = {
   drinks: [
     {
