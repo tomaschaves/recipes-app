@@ -1,40 +1,29 @@
-// import React from 'react';
-// import { cleanup } from '@testing-library/react';
-// import userEvent from '@testing-library/user-event';
-// import SelectedMeal from '../Pages/SelectedMeal';
-// import App from '../App';
-// import { renderWithRouterAndProvider } from './helpers/renderWithRouterAndProvider';
+import userEvent from '@testing-library/user-event';
+import { renderWithRouterAndProvider } from './helpers/renderWithRouterAndProvider';
+import RecipeDetails from '../Pages/RecipeDetails';
 
-// afterEach(cleanup);
+describe('01 - MEALS: Teste o componente <Meals/>', () => {
+  test('Favoritar: ao clicar no icone de coração, a receita é favoritada e o icone de coração preenchido é renderizado.', async () => {
+    // DAAAM | DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+    const { findByTestId } = renderWithRouterAndProvider(<RecipeDetails />, { initialEntries: ['/meals/52997'] });
+    // ACESSAR
+    const favoriteButton = await findByTestId('favorite-btn');
+    // AGIR
+    userEvent.click(favoriteButton);
+    // AFERIR
+    expect(favoriteButton.alt).toBe('favorito');
+  });
+});
 
-// const VARIAVEIS = 'variaveis';
-
-// describe('Teste da página SelectedMeal.js', () => {
-//   describe('1 - Rota', () => {
-//     test.only('1.1 - Se o usuário está na rota "/" ao acessar a aplicação.', () => {
-
-//     });
-//   });
-
-//   describe('2 - Navegação', () => {
-//     test('2.1 - Se o usuário é redirecionado para a rota "X" ao realizar determinada ação', () => {
-
-//     });
-//   });
-
-//   describe('3 - Renderização', () => {
-//     test('3.1 - Se os elementos ??? estão presentes na tela', () => {
-
-//     });
-
-//     test('3.2 - Se os elementos ??? estão presentes na tela após determinada ação', () => {
-
-//     });
-//   });
-
-//   describe('4 - Funcionalidade', () => {
-//     test('4.1 - As regras de negócio em cada cenário possível na interação com o usuário ', () => {
-
-//     });
-//   });
-// });
+describe('02 - DRINKS: Teste o componente <Drinks/>', () => {
+  test('Favoritar: ao clicar no icone de coração, a receita é favoritada e o icone de coração preenchido é renderizado.', async () => {
+    // DAAAM | DEFINIR | ACESSAR | AGIR | AFERIR | MOCKAR
+    const { findByTestId } = renderWithRouterAndProvider(<RecipeDetails />, { initialEntries: ['/drinks/15997'] });
+    // ACESSAR
+    const favoriteButton = await findByTestId('favorite-btn');
+    // AGIR
+    userEvent.click(favoriteButton);
+    // AFERIR
+    expect(favoriteButton.alt).toBe('favorito');
+  });
+});
