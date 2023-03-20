@@ -48,8 +48,8 @@ describe('01 - MEALS: Teste o componente <Meals/>', () => {
         drinks: {},
       }));
 
-      const recipesInProgresss = localStorage.getItem('inProgressRecipes');
-      const parsedRecipesInProgress = JSON.parse(recipesInProgresss);
+      const recipesInProgress = localStorage.getItem('inProgressRecipes');
+      const parsedRecipesInProgress = JSON.parse(recipesInProgress);
 
       expect(parsedRecipesInProgress.meals).toEqual({});
       expect(parsedRecipesInProgress.drinks).toEqual({});
