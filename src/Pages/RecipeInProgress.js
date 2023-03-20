@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Buttons from '../components/Buttons';
 import EndButton from '../components/EndButton';
 import returnObjectToSave from '../helpers/returnObjectToSave';
@@ -71,10 +71,10 @@ export default function RecipeInProgress() {
     && shownRecipe[0][`strIngredient${index}`] !== null) {
       ingredients.push(`${shownRecipe[0][`strIngredient${index}`]} 
       - ${shownRecipe[0][`strMeasure${index}`]}`);
-      const limit = 19;
-      if (index > limit) {
-        break;
-      }
+      // const limit = 19;
+      // if (index > limit) {
+      //   break;
+      // }
       index += 1;
     }
     return ingredients;
