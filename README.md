@@ -80,6 +80,10 @@ Não deixe de usar nossas dicas de escrita de README de projetos, e deixe sua cr
 
 <p>This project is licensed under the <a href="LICENSE">MIT License</a>.</p>
 
+<h2>Deploy</h2>
+
+<p>If you want to see a sample of the application, please click on this link: https://recipes-app-tomaschaves.vercel.app/</p>
+
 <h2>Contact 📧</h2>
 
 <p>Tomás Chaves - <a href="mailto:tomaschavesdev@gmail.com">tomaschavesdev@gmail.com</a> ✉️</p>
